@@ -8,7 +8,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $ghi_chu = mysqli_real_escape_string($conn, $_POST['note']);
     $nganh = mysqli_real_escape_string($conn, $_POST['department']);
     $teacher_id = intval($_POST['teacher_id']); 
-
     $sql_add_subject = "INSERT INTO subjects (name, teacher_id, department, description)
                         VALUES ('$ten_bo_mon', '$teacher_id', '$nganh', '$ghi_chu')";
     if ($conn->query($sql_add_subject) === TRUE) {

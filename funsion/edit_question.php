@@ -19,7 +19,7 @@ if ($result->num_rows === 0) {
 }
 
 $question = $result->fetch_assoc();
-// lấy yêu cầu người sửa
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $question_text = $_POST['question_text'];
     $answer_a = $_POST['answer_a'];
@@ -31,9 +31,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $teacher_name = $_POST['teacher_name'];
     $content = $_POST['content'];
 
-    $sql_update = "UPDATE create_questions SET question_text = ?, answer_a = ?, answer_b = ?, answer_c = ?, answer_d = ?, correct_answer = ?, difficulty = ?, teacher_name = ?, content = ? WHERE id = ?";
+    // --- xử lý ảnh upload ---
+    $image_name = $question['image']; // giữ ảnh cũ
+    if (!empty($_FILES['image']['name'])) {
+        $target_dir = "../uploads/";
+        $image_name = time() . "_" . basename($_FILES['image']['name']);
+        $target_file = $target_dir . $image_name;
+        move_uploaded_file($_FILES['image']['tmp_name'], $target_file);
+    }
+
+    $sql_update = "UPDATE create_questions 
+                   SET question_text = ?, answer_a = ?, answer_b = ?, answer_c = ?, answer_d = ?, 
+                       correct_answer = ?, difficulty = ?, teacher_name = ?, content = ?, image = ? 
+                   WHERE id = ?";
     $stmt_update = $conn->prepare($sql_update);
-    $stmt_update->bind_param('sssssssssi', $question_text, $answer_a, $answer_b, $answer_c, $answer_d, $correct_answer, $difficulty, $teacher_name, $content, $question_id);
+    $stmt_update->bind_param(
+        'ssssssssssi',
+        $question_text,
+        $answer_a,
+        $answer_b,
+        $answer_c,
+        $answer_d,
+        $correct_answer,
+        $difficulty,
+        $teacher_name,
+        $content,
+        $image_name,
+        $question_id
+    );
 
     if ($stmt_update->execute()) {
         echo "<script>alert('Cập nhật thành công!'); window.location.href='../funsion/Sum_question.php';</script>";
@@ -43,7 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -54,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <h1>Chỉnh Sửa Câu Hỏi</h1>
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <label for="question_text">Câu hỏi:</label>
             <textarea name="question_text" id="question_text" required><?= htmlspecialchars($question['question_text']) ?></textarea>
 
@@ -90,6 +114,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <label for="content">Nội dung bổ sung:</label>
             <textarea name="content"><?= htmlspecialchars($question['content']) ?></textarea>
+
+            <!-- hiển thị ảnh hiện tại -->
+            <?php if (!empty($question['image'])): ?>
+                <p>Ảnh hiện tại:</p>
+                <img src="../uploads/<?= htmlspecialchars($question['image']) ?>" alt="Ảnh minh họa" style="max-width:200px; height:auto;">
+            <?php endif; ?>
+
+            <label for="image">Chọn ảnh mới (nếu muốn thay):</label>
+            <input type="file" name="image" id="image" accept="image/*">
 
             <button type="submit">Cập nhật câu hỏi</button>
         </form>

@@ -110,7 +110,7 @@ if ($subject_id) {
 
             <h3>Danh sách câu hỏi:</h3>
             <?php
-            $sql_questions = "SELECT id, question_text, difficulty FROM create_questions WHERE subject_id = ?";
+            $sql_questions = "SELECT id, question_text, difficulty, image FROM create_questions WHERE subject_id = ?";
             $stmt_questions = $conn->prepare($sql_questions);
             if (!$stmt_questions) {
                 die("Lỗi truy vấn câu hỏi: " . $conn->error);
@@ -119,8 +119,14 @@ if ($subject_id) {
             $stmt_questions->execute();
             $questions_result = $stmt_questions->get_result();
             while ($question = $questions_result->fetch_assoc()) {
-                echo "<div class='question-item' data-difficulty='" . $question['difficulty'] . "'>";
-                echo "<p><strong>Câu hỏi:</strong> " . $question['question_text'] . "</p>";
+                echo "<div class='question-item' data-difficulty='" . htmlspecialchars($question['difficulty']) . "'>";
+                echo "<p><strong>Câu hỏi:</strong> " . htmlspecialchars($question['question_text']) . "</p>";
+
+                // ✅ Hiển thị ảnh nếu có
+                if (!empty($question['image'])) {
+                    echo "<p><img src='" . htmlspecialchars($question['image']) . "' alt='Ảnh minh họa' style='max-width:300px; height:auto; border:1px solid #ccc; margin:10px 0;'></p>";
+                }
+
                 echo "<a href='edit_question.php?id=" . $question['id'] . "'><button>Xem đáp án</button></a>";
                 echo "</div><hr>";
             }

@@ -9,14 +9,14 @@ if (!isset($_SESSION['username'])) {
 include '../config/database.php';
 include '../require_profile_update.php';
 
-
 $ten_giao_vien = $_SESSION['username'];
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
 $sql_subjects = "SELECT id, name AS subject_name, department FROM subjects";
 $subjects_result = $conn->query($sql_subjects);
 
-//Lấy câu hỏi
+// Xử lý thêm câu hỏi
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $noi_dung_cau_hoi = trim($_POST['question_text']);
     $dap_an_a = trim($_POST['answer_a']);
@@ -28,23 +28,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nganh = trim($_POST['category']);
     $subject_id = intval($_POST['subject_id']);
 
-
-    if (empty($noi_dung_cau_hoi) || empty($dap_an_a) || empty($dap_an_b) || empty($dap_an_c) || empty($dap_an_d) || empty($dap_an_dung) || empty($do_kho) || empty($nganh) || empty($subject_id)) {
+    // Kiểm tra dữ liệu
+    if (empty($noi_dung_cau_hoi) || empty($dap_an_a) || empty($dap_an_b) || 
+        empty($dap_an_c) || empty($dap_an_d) || empty($dap_an_dung) || 
+        empty($do_kho) || empty($nganh) || empty($subject_id)) {
         die("Vui lòng điền đầy đủ thông tin.");
     }
-//add vào databse
+
+    // Xử lý upload ảnh
+    $image_name = null;
+    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+        $target_dir = "../uploads/";
+        if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+        $image_name = time() . "_" . basename($_FILES["image"]["name"]);
+        $target_file = $target_dir . $image_name;
+
+        if (!move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+            die("Lỗi khi upload ảnh!");
+        }
+    }
+
+    // Thêm vào DB
     $truy_van = "INSERT INTO create_questions 
-        (question_text, answer_a, answer_b, answer_c, answer_d, correct_answer, difficulty, teacher_name, category, subject_id) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        (question_text, answer_a, answer_b, answer_c, answer_d, correct_answer, difficulty, teacher_name, category, subject_id, image) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $chuan_bi = $conn->prepare($truy_van);
 
     if (!$chuan_bi) {
         die("Lỗi prepare: " . $conn->error);
     }
 
-    $chuan_bi->bind_param('sssssssssi', 
-        $noi_dung_cau_hoi, $dap_an_a, $dap_an_b, $dap_an_c, 
-        $dap_an_d, $dap_an_dung, $do_kho, $ten_giao_vien, $nganh, $subject_id
+    $chuan_bi->bind_param(
+        'sssssssssis',
+        $noi_dung_cau_hoi,
+        $dap_an_a,
+        $dap_an_b,
+        $dap_an_c,
+        $dap_an_d,
+        $dap_an_dung,
+        $do_kho,
+        $ten_giao_vien,
+        $nganh,
+        $subject_id,
+        $image_name
     );
 
     if (!$chuan_bi->execute()) {
@@ -72,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <div class="container">
         <h1>Thêm Câu Hỏi Mới</h1>
-        <form method="POST" action="">
+        <form method="POST" action="" enctype="multipart/form-data">
             <p><strong>Giáo viên:</strong> <?php echo htmlspecialchars($ten_giao_vien); ?></p>
 
             <label for="subject_id">Chọn bộ môn:</label>
@@ -90,6 +118,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <label for="question_text">Câu hỏi:</label>
             <textarea id="question_text" name="question_text" rows="2" required></textarea>
+
+            <!-- Thêm upload ảnh -->
+            <label for="image">Ảnh minh họa (tùy chọn):</label>
+            <input type="file" name="image" id="image" accept="image/*"><br><br>
 
             <label for="answer_a">Đáp án A:</label>
             <textarea id="answer_a" name="answer_a" rows="2" required></textarea>
