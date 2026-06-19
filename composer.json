@@ -1,6 +1,12 @@
 {
     "require": {
+<<<<<<< HEAD
         "google/apiclient": "^2.15.0",
         "nawrasb/facebook-php-graph-sdk": "^5.7"
     }
 }
+=======
+        "dompdf/dompdf": "^3.1"
+    }
+}
+>>>>>>> 5c98bae44aa69b740bc76e66d2fef2abe7540625
