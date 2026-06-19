@@ -1,0 +1,365 @@
+/* ==========================================================================
+   1. RESET GIAO DIỆN & CẤU TRÚC CHUNG
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    /* Tông màu nền Pastel Teal dịu mắt đồng bộ với trang Đăng ký & Trang chủ */
+    background: linear-gradient(135deg, #eef7f9 0%, #daecef 100%);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Các vòng tròn mờ nghệ thuật ẩn phía sau nền tạo chiều sâu */
+body::before, body::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(42, 93, 106, 0.03);
+    z-index: 1;
+}
+body::before { width: 500px; height: 500px; top: -100px; left: -100px; }
+body::after { width: 400px; height: 400px; bottom: -100px; right: -5px; }
+
+.main-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+    z-index: 5;
+}
+
+/* ===== Logos ===== */
+.logo-ramro {
+    position: absolute;
+    top: 25px;
+    left: 30px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2a5d6a; /* Đổi sang màu xanh sẫm để nổi bật trên nền sáng */
+    text-decoration: none;
+    letter-spacing: 1px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo-designervn {
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #718096;
+    letter-spacing: 1px;
+    z-index: 100;
+}
+
+/* ==========================================================================
+   2. HỘP ĐĂNG NHẬP CHÍNH (MAIN BOX)
+   ========================================================================== */
+.login-box {
+    width: 1000px; 
+    height: 600px; 
+    display: flex;
+    background-color: #ffffff;
+    border-radius: 28px;
+    /* Đổ bóng mịn màng cao cấp */
+    box-shadow: 0 30px 60px rgba(42, 93, 106, 0.08); 
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    overflow: hidden; 
+    position: relative;
+    z-index: 10;
+}
+
+/* ==========================================================================
+   3. NỬA BÊN TRÁI: FORM NHẬP LIỆU TRẮNG
+   ========================================================================== */
+.login-left {
+    flex: 1; /* Chia đều 50% */
+    background-color: #ffffff;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+.left-content {
+    max-width: 380px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.login-left h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #2c3e50;
+}
+
+.login-left .subtitle {
+    color: #718096;
+    font-size: 0.95rem;
+    margin-bottom: 35px;
+}
+
+/* Thông báo lỗi */
+.error-msg {
+    background: #fed7d7;
+    color: #9b2c2c;
+    padding: 12px 15px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(155, 44, 44, 0.1);
+    animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Kiểu dáng các trường đầu vào */
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 30px; 
+    font-size: 0.95rem;
+    color: #2c3e50;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+}
+
+.form-input::placeholder {
+    color: #a0aec0;
+}
+
+.form-input:focus {
+    border-color: #3f7d8c;
+    background: #ffffff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(63, 125, 140, 0.15);
+}
+
+/* Kiểu dáng nút đăng nhập */
+.btn-login {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 30px; 
+    background-color: #2a5d6a; 
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(42, 93, 106, 0.15);
+    transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+    background-color: #1e4b57;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(42, 93, 106, 0.25);
+}
+
+/* Liên kết 'Quên mật khẩu?' */
+.forgot-password {
+    display: block;
+    text-align: center;
+    margin-top: 25px;
+    color: #718096;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.forgot-password:hover {
+    color: #2a5d6a;
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   4. VÒNG TRÒN "HOẶC" NỔI 3D Ở GIỮA
+   ========================================================================== */
+.or-divider {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #718096;
+    z-index: 20;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+}
+
+/* ==========================================================================
+   5. NỬA BÊN PHẢI: KÍNH MỜ PASTEL (GLASSMORPHISM)
+   ========================================================================== */
+.login-right {
+    flex: 1; /* Chia đều 50% */
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.45);
+    border-left: 1px solid rgba(42, 93, 106, 0.08);
+}
+
+/* Hình nền mờ che phủ */
+.right-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../uploads/balloon-background.jpg'); 
+    background-size: cover;
+    background-position: center;
+}
+
+.right-background::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.45); /* Lớp phủ trắng trong suốt */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Nội dung phần bên phải */
+.right-content {
+    position: relative;
+    z-index: 5;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-align: center;
+    color: #2c3e50; /* Đổi màu chữ tối để hiện rõ trên nền sáng */
+}
+
+.login-right h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #2a5d6a;
+    margin-bottom: 5px;
+}
+
+.login-right .subtitle {
+    color: #718096;
+    font-size: 0.95rem;
+    margin-bottom: 40px;
+}
+
+/* ===== Nút mạng xã hội ===== */
+.social-icons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 50px;
+}
+
+.social-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    color: #ffffff;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.social-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.facebook { background-color: #3b5998; }
+.twitter { background-color: #1da1f2; }
+.google-plus { background-color: #db4437; }
+
+/* ===== Phần đăng ký ===== */
+.sign-up-section {
+    border-top: 1px solid rgba(42, 93, 106, 0.1);
+    padding-top: 25px;
+    width: 80%;
+}
+
+.sign-up-section p {
+    font-size: 0.85rem;
+    color: #718096;
+    margin-bottom: 8px;
+}
+
+.sign-up-link {
+    font-weight: 700;
+    color: #2a5d6a;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+}
+
+.sign-up-link:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   6. RESPONSIVE CHO ĐIỆN THOẠI/TABLET
+   ========================================================================== */
+@media (max-width: 1050px) {
+    .login-box {
+        width: 95%;
+        height: auto;
+        flex-direction: column;
+    }
+    .or-divider { display: none; }
+    .login-left, .login-right {
+        flex: none;
+        width: 100%;
+        padding: 40px;
+    }
+    .sign-up-section {
+        margin-top: 30px;
+    }
+}

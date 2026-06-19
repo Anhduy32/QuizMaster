@@ -1,0 +1,27 @@
+Hướng đi trang Web của tôi sẽ là dùng cho toàn bộ mọi người không chia giáo viên hay học sinh chỉ cần người đó cần đề thì hoặc thi thử sẽ có thể sử dụng
+Mọi người dùng khi đăng ký xong sẽ đều có quyền hạn như nhau: vừa có thể làm bài thi thử, vừa có thể đóng góp/tạo đề thi (giống như mô hình của StuDocu hay Wikipedia – bất kỳ ai cũng là người dùng và có thể đóng góp tài liệu).
+
+
+
+goggee :
+ClientID :794115850452-2imqu62unnksi6mvj857sn8mvpj54as7.apps.googleusercontent.com
+Client secret :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
+
+
+
+CHUA LÀM 
+1. Nơi đặt đoạn code "TẠO ĐỀ THI MỚI"
+Sau này, bạn sẽ cần tạo một file tên là create_quiz.php (có thể đặt trong thư mục funsion/quiz/).
+
+File này sẽ chứa một giao diện Form cực đẹp để người dùng nhập: Tên đề thi, Chọn môn học, Thời gian làm bài...
+
+Khi người dùng bấm nút "Lưu đề thi", đoạn code số 1 mình gửi lúc nãy sẽ nằm ở ngay trên cùng của file này để nhận dữ liệu, móc tên username của họ và đẩy vào bảng quizzes.
+
+2. Nơi đặt đoạn code "LÀM XONG BÀI THI"
+Bạn sẽ cần tạo một file tên là submit_quiz.php hoặc take_quiz.php.
+
+File này hiển thị các câu hỏi trắc nghiệm A, B, C, D.
+
+Khi học sinh làm xong và bấm nút "Nộp bài", đoạn code số 2 sẽ được kích hoạt. Nó nhận số điểm mà học sinh vừa đạt được, lấy tên username của học sinh đó và lưu thành tích vào bảng quiz_history.
+
+Bạn nhận xét cực kỳ chính xác! Việc nhét "Lịch sử học tập" chung với trang Cập nhật hồ sơ (Profile) là một lỗi UX (Trải nghiệm người dùng) khá ngớ ngẩn. Lịch sử học tập và Thư viện cá nhân xứng đáng có những trang quản lý riêng biệt (ví dụ: history.php và my_library.php).

@@ -1,0 +1,77 @@
+/* ================= GIAO DIỆN LÀM BÀI THI (FOCUS MODE) ================= */
+:root {
+    --primary-teal: #0f5c6b;
+    --accent-teal: #2c9c8c;
+    --bg-main: #f4f7f6;
+    --text-main: #2d3748;
+    --text-muted: #718096;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+body { background: var(--bg-main); color: var(--text-main); padding-top: 80px; }
+
+/* Navbar Cố định */
+.exam-header {
+    position: fixed; top: 0; left: 0; width: 100%;
+    background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 40px; z-index: 1000;
+}
+.exam-title { font-size: 1.2rem; font-weight: 800; color: var(--primary-teal); }
+.timer-box {
+    background: #fff5f5; color: #e53e3e; padding: 10px 20px;
+    border-radius: 50px; font-weight: 800; font-size: 1.2rem;
+    display: flex; align-items: center; gap: 8px; border: 2px solid #fed7d7;
+}
+
+/* Khu vực làm bài */
+.exam-container { max-width: 800px; margin: 0 auto; padding: 20px; }
+.question-card {
+    background: white; border-radius: 16px; padding: 30px;
+    margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    border: 1px solid #e2e8f0;
+}
+.q-number { 
+    font-weight: 800; color: var(--text-muted); margin-bottom: 15px; 
+    font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; 
+}
+.q-content { font-size: 1.2rem; font-weight: 600; line-height: 1.5; margin-bottom: 25px; }
+
+/* Đáp án dạng Block */
+.options-grid { display: grid; gap: 12px; }
+.option-label {
+    display: flex; align-items: center; padding: 16px 20px;
+    border: 2px solid #edf2f7; border-radius: 12px; cursor: pointer;
+    transition: 0.2s; background: #f8fafc; font-weight: 500;
+}
+.option-label:hover { border-color: #cbd5e0; background: white; }
+
+/* CSS Ẩn radio mặc định và tạo hiệu ứng khi chọn */
+.option-label input[type="radio"] { display: none; }
+.custom-radio {
+    width: 24px; height: 24px; border: 2px solid #cbd5e0;
+    border-radius: 50%; margin-right: 15px; display: flex;
+    align-items: center; justify-content: center;
+}
+.option-label input[type="radio"]:checked + .custom-radio {
+    border-color: var(--primary-teal);
+}
+.option-label input[type="radio"]:checked + .custom-radio::after {
+    content: ''; width: 12px; height: 12px;
+    background: var(--primary-teal); border-radius: 50%;
+}
+.option-label:has(input[type="radio"]:checked) {
+    border-color: var(--primary-teal); background: #f0f7f7;
+}
+
+/* Nút Nộp bài */
+.btn-submit {
+    background: var(--primary-teal); color: white; width: 100%;
+    padding: 18px; border: none; border-radius: 12px;
+    font-size: 1.2rem; font-weight: 800; cursor: pointer;
+    transition: 0.3s; margin-top: 20px; margin-bottom: 50px;
+}
+.btn-submit:hover { 
+    background: #0a4a56; transform: translateY(-2px); 
+    box-shadow: 0 10px 20px rgba(15, 92, 107, 0.2); 
+}

@@ -1,0 +1,69 @@
+/* ================= THƯ VIỆN CỦA TÔI UI ================= */
+.library-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.library-header {
+    margin-bottom: 35px;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(42, 93, 106, 0.05);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.library-title { font-size: 1.8rem; font-weight: 800; color: var(--primary-teal); margin-bottom: 8px; }
+.library-desc { color: var(--text-muted); font-size: 1.05rem; }
+
+.btn-create-new {
+    background: var(--primary-teal); color: white; text-decoration: none;
+    padding: 12px 25px; border-radius: 12px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px; transition: 0.3s;
+}
+.btn-create-new:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+/* Bảng quản lý dạng Grid */
+.library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+}
+
+.admin-quiz-card {
+    background: white; border-radius: 20px; padding: 25px;
+    border: 1px solid #e2e8f0; box-shadow: var(--glass-shadow);
+    display: flex; flex-direction: column; justify-content: space-between;
+    transition: 0.3s; position: relative; overflow: hidden;
+}
+.admin-quiz-card:hover { border-color: var(--primary-teal); box-shadow: 0 10px 30px rgba(15, 92, 107, 0.1); }
+
+/* Trạng thái */
+.status-badge {
+    position: absolute; top: 20px; right: -30px; transform: rotate(45deg);
+    padding: 5px 30px; font-size: 0.75rem; font-weight: 800; color: white; text-transform: uppercase;
+}
+.status-draft { background: #e53e3e; }
+.status-completed { background: #38a169; }
+
+.card-info { margin-bottom: 25px; padding-right: 20px; }
+.subject-tag { display: inline-block; padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; background: #edf2f7; color: #4a5568; margin-bottom: 15px; }
+.quiz-title { font-size: 1.2rem; font-weight: 800; color: var(--text-main); margin-bottom: 10px; line-height: 1.4; }
+.quiz-meta { display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+.quiz-meta i { color: var(--primary-teal); }
+
+/* Nút hành động */
+.card-actions {
+    display: flex; gap: 10px; border-top: 1px solid #edf2f7; padding-top: 20px;
+}
+.btn-action {
+    flex: 1; text-align: center; padding: 10px; border-radius: 10px;
+    font-size: 0.9rem; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; text-decoration: none;
+}
+.btn-edit { background: #ebf8ff; color: #2b6cb0; }
+.btn-edit:hover { background: #3182ce; color: white; }
+.btn-delete { background: #fff5f5; color: #c53030; }
+.btn-delete:hover { background: #e53e3e; color: white; }
