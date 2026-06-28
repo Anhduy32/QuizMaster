@@ -3,16 +3,15 @@ session_start();
 include 'config/database.php'; 
 
 if (!isset($_SESSION['username'])) {
-    header('Location: funsion/login/login.php');
+    header('Location: modules/auth/login.php');
     exit();
 }
 
 $ten_dang_nhap = $_SESSION['username'];
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 
-// ====================================================================
-// 1. LẤY THÔNG TIN NGƯỜI DÙNG & XỬ LÝ CHUỖI ĐĂNG NHẬP
-// ====================================================================
+// [Các đoạn PHP lấy dữ liệu người dùng, thống kê, chuỗi đăng nhập... GIỮ NGUYÊN NHƯ CŨ CỦA BẠN]
+// LẤY THÔNG TIN NGƯỜI DÙNG
 $truy_van = "SELECT * FROM users WHERE username = ?";
 $chuan_bi = $conn->prepare($truy_van);
 $chuan_bi->bind_param('s', $ten_dang_nhap);
@@ -32,30 +31,15 @@ else { $loi_chao = "Chào buổi tối"; }
 
 $hom_nay = date('Y-m-d');
 $hom_qua = date('Y-m-d', strtotime('-1 day'));
-
 $ngay_dang_nhap_cuoi = $nguoi_dung['last_login_date'];
 $chuoi_hien_tai = $nguoi_dung['login_streak'] ?? 0;
-$can_cap_nhat_db = false;
 
 if ($ngay_dang_nhap_cuoi !== $hom_nay) {
-    if ($ngay_dang_nhap_cuoi === $hom_qua) {
-        $chuoi_hien_tai++; 
-    } else {
-        $chuoi_hien_tai = 1; 
-    }
-    $ngay_dang_nhap_cuoi = $hom_nay;
-    $can_cap_nhat_db = true;
+    $chuoi_hien_tai = ($ngay_dang_nhap_cuoi === $hom_qua) ? $chuoi_hien_tai + 1 : 1;
+    $conn->query("UPDATE users SET last_login_date = '$hom_nay', login_streak = $chuoi_hien_tai WHERE username = '$ten_dang_nhap'");
 }
 
-if ($can_cap_nhat_db) {
-    $stmt_update = $conn->prepare("UPDATE users SET last_login_date = ?, login_streak = ? WHERE username = ?");
-    $stmt_update->bind_param('sis', $ngay_dang_nhap_cuoi, $chuoi_hien_tai, $ten_dang_nhap);
-    $stmt_update->execute();
-}
-
-// ====================================================================
-// 2. LẤY CÁC DỮ LIỆU THỐNG KÊ KHÁC 
-// ====================================================================
+// THỐNG KÊ
 $stmt_stats = $conn->prepare("SELECT COUNT(id) as total_taken, AVG(score) as avg_score FROM quiz_history WHERE username = ?");
 $stmt_stats->bind_param('s', $ten_dang_nhap);
 $stmt_stats->execute();
@@ -63,28 +47,17 @@ $stats = $stmt_stats->get_result()->fetch_assoc();
 $tong_bai_da_lam = $stats['total_taken'] ?? 0;
 $diem_trung_binh = $stats['avg_score'] ? round($stats['avg_score'], 1) : 0;
 
-$stmt_recent = $conn->prepare("
-    SELECT q.title, h.score, h.completed_at 
-    FROM quiz_history h JOIN quizzes q ON h.quiz_id = q.id 
-    WHERE h.username = ? ORDER BY h.completed_at DESC LIMIT 3
-");
+$stmt_recent = $conn->prepare("SELECT q.title, h.score, h.completed_at FROM quiz_history h JOIN quizzes q ON h.quiz_id = q.id WHERE h.username = ? ORDER BY h.completed_at DESC LIMIT 4");
 $stmt_recent->bind_param('s', $ten_dang_nhap);
 $stmt_recent->execute();
 $res_history = $stmt_recent->get_result();
 
-$stmt_weekly = $conn->prepare("
-    SELECT COUNT(id) as weekly_taken 
-    FROM quiz_history 
-    WHERE username = ? AND YEARWEEK(completed_at, 1) = YEARWEEK(CURDATE(), 1)
-");
+$stmt_weekly = $conn->prepare("SELECT COUNT(id) as weekly_taken FROM quiz_history WHERE username = ? AND YEARWEEK(completed_at, 1) = YEARWEEK(CURDATE(), 1)");
 $stmt_weekly->bind_param('s', $ten_dang_nhap);
 $stmt_weekly->execute();
 $weekly_taken = $stmt_weekly->get_result()->fetch_assoc()['weekly_taken'] ?? 0;
 $muc_tieu_tuan = 5;
 
-// ====================================================================
-// 3. LẤY DỮ LIỆU ĐỀ THI TRƯNG BÀY
-// ====================================================================
 $res_suggest = $conn->query("SELECT * FROM quizzes WHERE status = 'completed' ORDER BY RAND() LIMIT 6");
 
 function getSubjectStyle($subject) {
@@ -105,36 +78,38 @@ function getSubjectStyle($subject) {
     <title>Bảng điều khiển - QuizMaster</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="css/home.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="assets/css/home.css?v=<?php echo time(); ?>">
+    <style>
+        .top-action-btns { display: flex; gap: 12px; margin-right: 25px; border-right: 2px solid #edf2f7; padding-right: 25px; }
+        .btn-header-action { padding: 10px 18px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-header-primary { background: var(--primary-teal); color: white; }
+        .btn-header-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(15, 92, 107, 0.2); }
+        .btn-header-secondary { background: #ebf8ff; color: #2b6cb0; }
+        .btn-header-secondary:hover { background: #bee3f8; transform: translateY(-2px); }
+    </style>
 </head>
 <body>
 
-    <aside class="sidebar">
-        <a href="index.php" class="brand-logo" title="Về trang giới thiệu">
-            <i class="fa-solid fa-graduation-cap"></i> <span>QUIZMASTER</span>
-        </a>
-        <nav class="nav-menu">
-            <a href="home.php" class="nav-item active"><i class="fas fa-home"></i> <span>Bảng điều khiển</span></a>
-            <a href="funsion/question/sum_question.php" class="nav-item"><i class="fas fa-compass"></i> <span>Khám phá đề thi</span></a>            
-            <a href="funsion/my_library.php" class="nav-item"><i class="fas fa-folder-open"></i> <span>Thư viện của tôi</span></a>
-            <a href="funsion/history.php" class="nav-item"><i class="fas fa-chart-bar"></i> <span>Lịch sử học tập</span></a>
-        </nav>
-        
-        <a href="funsion/question/create_quiz/step1_create_quiz.php" class="btn-create-quiz">
-            <i class="fas fa-plus-circle"></i> <span>Tạo đề thi mới</span>
-        </a>
-    </aside>
+    <?php include 'includes/sidebar.php'; ?>
 
     <main class="main-wrapper">
-        <header class="top-header">
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Tìm kiếm bộ đề, môn học...">
+        <header class="top-header" style="justify-content: space-between; margin-bottom: 40px;">
+            <div class="header-title">
+                <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 0;">Tổng quan</h2>
             </div>
             
             <div class="header-actions">
+                <div class="top-action-btns">
+                    <a href="modules/quiz/create_step1.php" class="btn-header-action btn-header-primary">
+                        <i class="fas fa-plus"></i> Tạo đề mới
+                    </a>
+                    <a href="modules/quiz/add_question_hub.php" class="btn-header-action btn-header-secondary">
+                        <i class="fas fa-puzzle-piece"></i> Thêm câu hỏi
+                    </a>
+                </div>
+
                 <div class="btn-notification"><i class="far fa-bell"></i></div>
-                <a href="funsion/update/update_profile.php" class="user-profile-widget" title="Cài đặt tài khoản">
+                <a href="modules/user/update_profile.php" class="user-profile-widget" title="Cài đặt tài khoản">
                     <img src="<?php echo htmlspecialchars($avatar_url); ?>" alt="Avatar">
                     <span><?php echo htmlspecialchars($ten_goi); ?></span>
                 </a>
@@ -149,7 +124,7 @@ function getSubjectStyle($subject) {
                     <div class="welcome-text">
                         <h1><?php echo $loi_chao; ?>, <?php echo htmlspecialchars($ten_goi); ?>! 👋</h1>
                         <p>Bạn đã hoàn thành <?php echo $tong_bai_da_lam; ?> bài kiểm tra. Tiếp tục duy trì phong độ nhé!</p>
-                        <a href="funsion/question/sum_question.php" class="btn-random-quiz"><i class="fas fa-random"></i> Khám phá ngay</a>
+                        <a href="explore.php" class="btn-random-quiz"><i class="fas fa-random"></i> Khám phá ngay</a>
                     </div>
                     <div style="font-size: 6rem; opacity: 0.9; margin-right: 20px;"><i class="fas fa-rocket"></i></div>
                 </div>
@@ -181,14 +156,14 @@ function getSubjectStyle($subject) {
                 <section style="margin-bottom: 40px;">
                     <div class="section-header">
                         <h2 class="section-title">Gợi ý luyện tập cho bạn</h2>
-                        <a href="funsion/question/sum_question.php" class="view-all">Xem tất cả <i class="fas fa-angle-right"></i></a>
+                        <a href="explore.php" class="view-all">Xem tất cả <i class="fas fa-angle-right"></i></a>
                     </div>
                     <div class="quiz-scroll-container">
                         <?php if ($res_suggest && $res_suggest->num_rows > 0): ?>
                             <?php while ($quiz = $res_suggest->fetch_assoc()): 
                                 $style = getSubjectStyle($quiz['subject']);
                             ?>
-                                <a href="funsion/question/take_quiz.php?id=<?php echo $quiz['id']; ?>" class="quiz-card">
+                                <a href="modules/quiz/take_quiz.php?id=<?php echo $quiz['id']; ?>" class="quiz-card">
                                     <div class="card-icon" style="background: <?php echo $style['bg']; ?>">
                                         <i class="fas <?php echo $style['icon']; ?>"></i>
                                     </div>
@@ -209,20 +184,6 @@ function getSubjectStyle($subject) {
             </div>
 
             <div class="right-sidebar">
-                
-                <div class="widget-card">
-                    <h3 class="widget-title"><i class="fas fa-tools" style="color: var(--primary-teal);"></i> Công cụ nhanh</h3>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <a href="funsion/question/create_quiz/step1_create_quiz.php" class="quick-tool-btn" style="background: #ebf8ff; color: #2b6cb0;">
-                            <i class="fas fa-plus"></i> Tạo đề thi mới
-                        </a>
-                        
-                        <a href="funsion/question/add_question_hub.php" class="quick-tool-btn" style="background: #f0fff4; color: #2f855a;">
-                            <i class="fas fa-question-circle"></i> Thêm câu hỏi vào kho
-                        </a>
-                    </div>
-                </div>
-            
                 <div class="widget-card">
                     <h3 class="widget-title"><i class="fas fa-bullseye" style="color: var(--primary-teal);"></i> Mục tiêu tuần này</h3>
                     <p style="font-size: 0.9rem; color: var(--text-muted);">Hoàn thành <?php echo $muc_tieu_tuan; ?> bài kiểm tra</p>
@@ -252,24 +213,14 @@ function getSubjectStyle($subject) {
                                     </div>
                                 </div>
                             <?php endwhile; ?>
-                            
-                            <a href="funsion/history.php" class="view-all-history">Xem toàn bộ lịch sử</a>
+                            <a href="modules/user/history.php" class="view-all-history">Xem toàn bộ lịch sử</a>
                         <?php else: ?>
                             <p style="font-size: 0.9rem; color: var(--text-muted); text-align: center; padding: 10px 0;">Bạn chưa làm bài kiểm tra nào trong tuần này.</p>
                         <?php endif; ?>
                     </div>
                 </div>
-
             </div>
-
         </div>
-
     </main>
-
-    <a href="funsion/question/create_quiz/step1_create_quiz.php" class="fab-create" title="Tạo đề thi mới">
-        <i class="fas fa-plus"></i>
-        <span class="fab-tooltip">Tạo đề thi mới</span>
-    </a>
-
 </body>
 </html>

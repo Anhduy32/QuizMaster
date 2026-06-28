@@ -1,12 +1,13 @@
 {
     "require": {
-<<<<<<< HEAD
-        "google/apiclient": "^2.15.0",
-        "nawrasb/facebook-php-graph-sdk": "^5.7"
+        "google/apiclient": "^2.16",
+        "dompdf/dompdf": "^3.1",
+        "phpoffice/phpword": "^1.1",
+        "smalot/pdfparser": "^2.12"
+    },
+    "config": {
+        "allow-plugins": {
+            "google/apiclient-services": true
+        }
     }
 }
-=======
-        "dompdf/dompdf": "^3.1"
-    }
-}
->>>>>>> 5c98bae44aa69b740bc76e66d2fef2abe7540625

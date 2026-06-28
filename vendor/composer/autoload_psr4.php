@@ -6,26 +6,25 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-<<<<<<< HEAD
     'Symfony\\Polyfill\\Php80\\' => array($vendorDir . '/symfony/polyfill-php80'),
+    'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
+    'Svg\\' => array($vendorDir . '/dompdf/php-svg-lib/src/Svg'),
+    'Sabberworm\\CSS\\' => array($vendorDir . '/sabberworm/php-css-parser/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/src'),
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-factory/src', $vendorDir . '/psr/http-message/src'),
     'Psr\\Http\\Client\\' => array($vendorDir . '/psr/http-client/src'),
     'Psr\\Cache\\' => array($vendorDir . '/psr/cache/src'),
+    'PhpOffice\\PhpWord\\' => array($vendorDir . '/phpoffice/phpword/src/PhpWord'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
+    'Masterminds\\' => array($vendorDir . '/masterminds/html5/src'),
+    'Laminas\\Escaper\\' => array($vendorDir . '/laminas/laminas-escaper/src'),
     'GuzzleHttp\\Psr7\\' => array($vendorDir . '/guzzlehttp/psr7/src'),
     'GuzzleHttp\\Promise\\' => array($vendorDir . '/guzzlehttp/promises/src'),
     'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
     'Google\\Service\\' => array($vendorDir . '/google/apiclient-services/src'),
     'Google\\Auth\\' => array($vendorDir . '/google/auth/src'),
     'Google\\' => array($vendorDir . '/google/apiclient/src'),
-    'Firebase\\JWT\\' => array($vendorDir . '/firebase/php-jwt/src'),
-    'Facebook\\' => array($vendorDir . '/facebook/graph-sdk/src/Facebook'),
-=======
-    'Svg\\' => array($vendorDir . '/dompdf/php-svg-lib/src/Svg'),
-    'Sabberworm\\CSS\\' => array($vendorDir . '/sabberworm/php-css-parser/src'),
-    'Masterminds\\' => array($vendorDir . '/masterminds/html5/src'),
     'FontLib\\' => array($vendorDir . '/dompdf/php-font-lib/src/FontLib'),
+    'Firebase\\JWT\\' => array($vendorDir . '/firebase/php-jwt/src'),
     'Dompdf\\' => array($vendorDir . '/dompdf/dompdf/src'),
->>>>>>> 5c98bae44aa69b740bc76e66d2fef2abe7540625
 );
