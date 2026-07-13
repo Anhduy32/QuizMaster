@@ -2,24 +2,32 @@
 session_start();
 include '../../config/database.php';
 
-// CẤU HÌNH PHÂN TRANG
-$limit = 9; // Hiển thị 9 đề thi mỗi trang
-$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+// ================= KIỂM TRA ĐĂNG NHẬP =================
+if (!isset($_SESSION['username'])) {
+    header('Location: ../auth/login.php');
+    exit();
+}
+
+// ================= CẤU HÌNH PHÂN TRANG =================
+$limit = 9;
+$page = filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT, ['options' => ['default' => 1, 'min_range' => 1]]);
 $offset = ($page - 1) * $limit;
 
-// LẤY THAM SỐ TÌM KIẾM & LỌC
+// ================= LẤY THAM SỐ TÌM KIẾM & LỌC =================
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$subject_filter = isset($_GET['subject']) ? $_GET['subject'] : '';
+$subject_filter = isset($_GET['subject']) ? trim($_GET['subject']) : '';
+$audience_filter = isset($_GET['audience']) ? trim($_GET['audience']) : '';
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'newest';
 
-// XÂY DỰNG CÂU LỆNH SQL ĐỘNG (Dynamic Query)
-$where_clauses = ["q.status = 'completed'"];
+// ================= XÂY DỰNG CÂU LỆNH SQL ĐỘNG =================
+$where_clauses = ["q.status = 'completed'", "q.num_questions > 0"];
 $params = [];
 $types = "";
 
 if (!empty($search)) {
     $where_clauses[] = "(q.title LIKE ? OR q.subject LIKE ? OR u.full_name LIKE ?)";
-    $search_param = "%{$search}%";
+    $escaped_search = str_replace(['\\', '%', '_'], ['\\\\', '\%', '\_'], $search);
+    $search_param = "%{$escaped_search}%";
     array_push($params, $search_param, $search_param, $search_param);
     $types .= "sss";
 }
@@ -30,28 +38,46 @@ if (!empty($subject_filter)) {
     $types .= "s";
 }
 
-$where_sql = implode(" AND ", $where_clauses);
-$order_sql = ($sort === 'oldest') ? "ASC" : "DESC";
+if (!empty($audience_filter)) {
+    $where_clauses[] = "q.target_audience = ?";
+    $params[] = $audience_filter;
+    $types .= "s";
+}
 
-// 1. Đếm tổng số record để làm phân trang
+$where_sql = implode(" AND ", $where_clauses);
+
+if ($sort === 'popular') {
+    $order_sql = "ORDER BY q.views DESC, q.created_at DESC";
+} elseif ($sort === 'oldest') {
+    $order_sql = "ORDER BY q.created_at ASC";
+} else {
+    $order_sql = "ORDER BY q.created_at DESC";
+}
+
+// ================= ĐẾM TỔNG RECORD =================
 $count_query = "SELECT COUNT(q.id) as total FROM quizzes q JOIN users u ON q.creator_username = u.username WHERE $where_sql";
 $stmt_count = $conn->prepare($count_query);
 if (!empty($params)) {
     $stmt_count->bind_param($types, ...$params);
 }
 $stmt_count->execute();
-$total_quizzes = $stmt_count->get_result()->fetch_assoc()['total'];
-$total_pages = ceil($total_quizzes / $limit);
+$total_quizzes = $stmt_count->get_result()->fetch_assoc()['total'] ?? 0;
 
-// 2. Lấy dữ liệu chính
+$total_pages = ceil($total_quizzes / $limit) ?: 1; 
+if ($page > $total_pages) {
+    $page = $total_pages;
+    $offset = ($page - 1) * $limit;
+}
+
+// ================= LẤY DỮ LIỆU CHÍNH =================
 $query = "SELECT q.*, u.full_name AS creator_name 
-          FROM quizzes q JOIN users u ON q.creator_username = u.username 
+          FROM quizzes q 
+          JOIN users u ON q.creator_username = u.username 
           WHERE $where_sql 
-          ORDER BY q.created_at $order_sql 
+          $order_sql 
           LIMIT ? OFFSET ?";
 $stmt = $conn->prepare($query);
 
-// Gắn thêm limit và offset vào mảng params
 $params[] = $limit;
 $params[] = $offset;
 $types .= "ii";
@@ -60,170 +86,188 @@ $stmt->bind_param($types, ...$params);
 $stmt->execute();
 $quizzes = $stmt->get_result();
 
-// Hàm tạo màu sắc icon ngẫu nhiên theo môn học
+// ================= HÀM HỖ TRỢ =================
 function getSubjectStyle($subject) {
     $sub = mb_strtolower($subject, 'UTF-8');
-    if (strpos($sub, 'toán') !== false) return ['icon' => 'fa-calculator', 'color' => '#3b82f6', 'bg' => '#eff6ff'];
-    if (strpos($sub, 'lý') !== false) return ['icon' => 'fa-magnet', 'color' => '#f59e0b', 'bg' => '#fef3c7'];
-    if (strpos($sub, 'hóa') !== false) return ['icon' => 'fa-flask', 'color' => '#10b981', 'bg' => '#d1fae5'];
-    if (strpos($sub, 'anh') !== false) return ['icon' => 'fa-language', 'color' => '#ef4444', 'bg' => '#fee2e2'];
-    if (strpos($sub, 'tin') !== false) return ['icon' => 'fa-laptop-code', 'color' => '#8b5cf6', 'bg' => '#ede9fe'];
-    return ['icon' => 'fa-book-open', 'color' => '#64748b', 'bg' => '#f1f5f9'];
+    $styles = [
+        'toán' => ['icon' => 'fa-square-root-alt', 'gradient' => 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 'color' => '#667eea', 'bg' => 'rgba(102, 126, 234, 0.1)'],
+        'lý'   => ['icon' => 'fa-atom', 'gradient' => 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', 'color' => '#f5576c', 'bg' => 'rgba(245, 87, 108, 0.1)'],
+        'hóa'  => ['icon' => 'fa-flask', 'gradient' => 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', 'color' => '#4facfe', 'bg' => 'rgba(79, 172, 254, 0.1)'],
+        'anh'  => ['icon' => 'fa-language', 'gradient' => 'linear-gradient(135deg, #f43f5e 0%, #e11d48 100%)', 'color' => '#e11d48', 'bg' => 'rgba(225, 29, 72, 0.1)'],
+        'tin'  => ['icon' => 'fa-laptop-code', 'gradient' => 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', 'color' => '#43e97b', 'bg' => 'rgba(67, 233, 123, 0.1)']
+    ];
+
+    foreach ($styles as $key => $style) {
+        if (strpos($sub, $key) !== false) return $style;
+    }
+    return ['icon' => 'fa-book-open', 'gradient' => 'linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%)', 'color' => '#8b5cf6', 'bg' => 'rgba(139, 92, 246, 0.1)'];
 }
+
+// ================= PAGE CONFIG =================
+$page_title = 'Khám phá Đề Thi - QuizMaster';
+$page_css = 'sum_question.css';
+
+require_once '../../includes/layouts/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Khám phá Đề Thi - QuizMaster</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="../../css/dashboard.css">
-    <style>
-        /* CSS nội bộ bổ sung cho giao diện Explorer */
-        .explorer-hero {
-            background: linear-gradient(135deg, var(--primary) 0%, #312e81 100%);
-            border-radius: var(--radius-lg);
-            padding: 40px;
-            color: white;
-            text-align: center;
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
-        }
-        .explorer-hero h1 { margin: 0 0 10px 0; font-size: 2.2rem; font-weight: 800; }
-        .explorer-hero p { margin: 0; font-size: 1.1rem; opacity: 0.9; }
-        
-        .filter-bar {
-            background: #fff;
-            padding: 20px;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
-            margin-bottom: 30px;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .filter-bar .form-control { flex: 1; min-width: 200px; margin: 0; }
-        .filter-bar select.form-control { flex: 0.5; min-width: 150px; cursor: pointer; }
-        
-        .q-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        .q-icon-box { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-        .q-badge-new { background: #ef4444; color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        
-        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 40px; }
-        .page-link { padding: 10px 15px; border-radius: 8px; background: #fff; border: 1px solid var(--border-color); color: var(--text-main); text-decoration: none; font-weight: 600; transition: var(--transition); }
-        .page-link:hover { border-color: var(--primary); color: var(--primary); }
-        .page-link.active { background: var(--primary); color: white; border-color: var(--primary); pointer-events: none; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        
-        <a href="add_question_hub.php" style="color: var(--text-muted); text-decoration: none; font-weight: 600; display: inline-block; margin-bottom: 20px;">
-            <i class="fas fa-arrow-left"></i> Trở về Không gian làm việc
-        </a>
-
-        <div class="explorer-hero">
-            <i class="fas fa-rocket" style="font-size: 3rem; opacity: 0.2; position: absolute; right: 50px; top: -10px;"></i>
-            <h1>Cộng Đồng Đề Thi</h1>
-            <p>Khám phá và chinh phục <?php echo $total_quizzes; ?> bộ đề từ hàng ngàn giáo viên và học viên</p>
-        </div>
-
-        <form action="" method="GET" class="filter-bar">
-            <div style="flex: 1; min-width: 250px; position: relative;">
-                <i class="fas fa-search" style="position: absolute; left: 15px; top: 15px; color: #94a3b8;"></i>
-                <input type="text" name="search" class="form-control" style="padding-left: 40px;" placeholder="Nhập tên đề, tên tác giả..." value="<?php echo htmlspecialchars($search); ?>">
-            </div>
+<!-- ================= NỘI DUNG CHÍNH ================= -->
+<main class="main-wrapper">
+    <div class="content-wrap">
+        <div class="explore-container">
             
-            <select name="subject" class="form-control">
-                <option value="">-- Tất cả môn học --</option>
-                <option value="Toán học" <?php if($subject_filter == 'Toán học') echo 'selected'; ?>>Toán học</option>
-                <option value="Vật lý" <?php if($subject_filter == 'Vật lý') echo 'selected'; ?>>Vật lý</option>
-                <option value="Hóa học" <?php if($subject_filter == 'Hóa học') echo 'selected'; ?>>Hóa học</option>
-                <option value="Tiếng Anh" <?php if($subject_filter == 'Tiếng Anh') echo 'selected'; ?>>Tiếng Anh</option>
-            </select>
+            <a href="add_question_hub.php" class="back-link">
+                <i class="fas fa-arrow-left"></i> Trở về Không gian làm việc
+            </a>
 
-            <select name="sort" class="form-control">
-                <option value="newest" <?php if($sort == 'newest') echo 'selected'; ?>>Mới nhất trước</option>
-                <option value="oldest" <?php if($sort == 'oldest') echo 'selected'; ?>>Cũ nhất trước</option>
-            </select>
+            <div class="explore-header">
+                <h1 class="explore-title">
+                    <i class="fas fa-rocket"></i> Cộng Đồng Đề Thi
+                </h1>
+                <p class="explore-desc">
+                    Khám phá và chinh phục <strong><?php echo number_format($total_quizzes); ?></strong> bộ đề từ hàng ngàn giáo viên và học viên
+                </p>
+            </div>
 
-            <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Lọc</button>
-            <?php if(!empty($search) || !empty($subject_filter)): ?>
-                <a href="sum_question.php" class="btn btn-outline" style="padding: 12px;"><i class="fas fa-sync-alt"></i></a>
-            <?php endif; ?>
-        </form>
-
-        <div class="grid-3">
-            <?php if ($quizzes->num_rows > 0): ?>
-                <?php while($q = $quizzes->fetch_assoc()): 
-                    $style = getSubjectStyle($q['subject']);
+            <div class="filter-section">
+                <form action="" method="GET" class="filter-form">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" name="search" placeholder="Nhập tên đề, tên tác giả..." value="<?php echo htmlspecialchars($search); ?>">
+                    </div>
                     
-                    // Logic tính toán nhãn "MỚI" (Nếu đề tạo trong vòng 7 ngày)
-                    $created_time = strtotime($q['created_at']);
-                    $is_new = ($created_time > strtotime('-7 days'));
-                ?>
-                    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
-                        <div>
-                            <div class="q-card-header">
-                                <div class="q-icon-box" style="background: <?php echo $style['bg']; ?>; color: <?php echo $style['color']; ?>;">
-                                    <i class="<?php echo $style['icon']; ?>"></i>
+                    <select name="subject" class="filter-select">
+                        <option value="">-- Môn học --</option>
+                        <option value="Toán học" <?php if($subject_filter == 'Toán học') echo 'selected'; ?>>Toán học</option>
+                        <option value="Vật lý" <?php if($subject_filter == 'Vật lý') echo 'selected'; ?>>Vật lý</option>
+                        <option value="Hóa học" <?php if($subject_filter == 'Hóa học') echo 'selected'; ?>>Hóa học</option>
+                        <option value="Tiếng Anh" <?php if($subject_filter == 'Tiếng Anh') echo 'selected'; ?>>Tiếng Anh</option>
+                    </select>
+
+                    <select name="audience" class="filter-select">
+                        <option value="">-- Đối tượng --</option>
+                        <option value="hoc_sinh" <?php if($audience_filter == 'hoc_sinh') echo 'selected'; ?>>Học sinh phổ thông</option>
+                        <option value="sinh_vien" <?php if($audience_filter == 'sinh_vien') echo 'selected'; ?>>Sinh viên đại học</option>
+                    </select>
+
+                    <select name="sort" class="filter-select">
+                        <option value="newest" <?php if($sort == 'newest') echo 'selected'; ?>>Mới nhất trước</option>
+                        <option value="popular" <?php if($sort == 'popular') echo 'selected'; ?>>Nhiều lượt thi nhất</option>
+                        <option value="oldest" <?php if($sort == 'oldest') echo 'selected'; ?>>Cũ nhất trước</option>
+                    </select>
+
+                    <button type="submit" class="btn-filter">
+                        <i class="fas fa-sliders-h"></i> Lọc
+                    </button>
+                    
+                    <?php if(!empty($search) || !empty($subject_filter) || !empty($audience_filter)): ?>
+                        <a href="sum_question.php" class="btn-filter-reset" title="Xóa bộ lọc">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    <?php endif; ?>
+                </form>
+            </div>
+
+            <div class="quiz-grid">
+                <?php if ($quizzes && $quizzes->num_rows > 0): ?>
+                    <?php while($q = $quizzes->fetch_assoc()): 
+                        $style = getSubjectStyle($q['subject']);
+                        $created_time = strtotime($q['created_at']);
+                        $is_new = ($created_time > strtotime('-7 days'));
+                        $initials = strtoupper(substr($q['creator_name'], 0, 1));
+                    ?>
+                        <div class="extended-quiz-card">
+                            <div class="card-top">
+                                <div class="subject-icon-box" style="background: <?php echo $style['bg']; ?>; color: <?php echo $style['color']; ?>;">
+                                    <i class="fas <?php echo $style['icon']; ?>"></i>
                                 </div>
                                 <?php if($is_new): ?>
-                                    <span class="q-badge-new"><i class="fas fa-fire"></i> MỚI</span>
+                                    <span class="badge-new">🔥 Mới</span>
                                 <?php endif; ?>
                             </div>
                             
-                            <span class="badge" style="background: #f1f5f9; color: var(--text-muted); margin-bottom: 10px; display: inline-block;">
-                                <?php echo htmlspecialchars($q['subject']); ?>
-                            </span>
-                            
-                            <h3 style="margin: 0 0 10px 0; font-size: 1.15rem; line-height: 1.4; color: var(--text-main);">
-                                <?php echo htmlspecialchars($q['title']); ?>
-                            </h3>
-                            
-                            <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px;">
-                                <i class="fas fa-user-edit" style="width: 20px;"></i> Tác giả: <strong><?php echo htmlspecialchars($q['creator_name']); ?></strong>
+                            <div class="card-mid">
+                                <span class="subject-badge">
+                                    <?php echo htmlspecialchars($q['subject']); ?>
+                                </span>
+                                
+                                <h3 class="quiz-item-title"><?php echo htmlspecialchars($q['title']); ?></h3>
+                                
+                                <div class="quiz-item-meta">
+                                    <i class="fas fa-user-edit"></i> Tác giả: <strong><?php echo htmlspecialchars($q['creator_name']); ?></strong>
+                                </div>
+                                <div class="quiz-item-meta">
+                                    <i class="fas fa-layer-group"></i> Độ dài: <strong><?php echo (int)$q['num_questions']; ?> câu hỏi</strong>
+                                </div>
+                                <div class="quiz-item-meta">
+                                    <i class="fas fa-fire" style="color: #dd6b20;"></i> Lượt thi: <strong><?php echo (int)$q['views']; ?></strong>
+                                </div>
                             </div>
-                            <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">
-                                <i class="fas fa-layer-group" style="width: 20px;"></i> Độ dài: <strong><?php echo $q['num_questions']; ?> câu hỏi</strong>
+
+                            <div class="card-bottom">
+                                <div class="creator-info">
+                                    <div class="creator-img" style="background: <?php echo $style['gradient']; ?>; color: white;">
+                                        <?php echo $initials; ?>
+                                    </div>
+                                    <div class="creator-text">
+                                        <h4><?php echo htmlspecialchars($q['creator_name']); ?></h4>
+                                        <span><i class="far fa-calendar-alt" style="margin-right: 4px;"></i> <?php echo date('d/m/Y', strtotime($q['created_at'])); ?></span>
+                                    </div>
+                                </div>
+                                <!-- Đã cập nhật link sang quiz_detail.php -->
+                                <a href="quiz_detail.php?id=<?php echo (int)$q['id']; ?>" class="btn-start-quiz">
+                                    Thử sức <i class="fas fa-arrow-right"></i>
+                                </a>
                             </div>
                         </div>
-                        <a href="take_quiz.php?id=<?php echo $q['id']; ?>" class="btn btn-success" style="width: 100%; border-radius: 8px;">
-                            Thử sức ngay <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <div class="empty-knowledge-box">
+                        <i class="fas fa-search"></i>
+                        <h3>Không tìm thấy bộ đề nào</h3>
+                        <p>Không có đề thi nào khớp với bộ lọc của bạn.</p>
+                        <a href="sum_question.php" class="btn-create-now">
+                            <i class="fas fa-sync-alt"></i> Xóa bộ lọc
                         </a>
                     </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <div style="grid-column: 1/-1;" class="text-center mt-4">
-                    <img src="https://cdn-icons-png.flaticon.com/512/7486/7486747.png" alt="Empty" style="width: 120px; opacity: 0.4; margin-bottom: 15px;">
-                    <h3 style="color: var(--text-muted);">Không tìm thấy bộ đề nào khớp với bộ lọc của bạn.</h3>
-                    <a href="sum_question.php" class="btn btn-primary mt-4">Xóa bộ lọc</a>
-                </div>
+                <?php endif; ?>
+            </div>
+
+            <?php if ($total_pages > 1): ?>
+            <div class="pagination">
+                <?php 
+                    $url_params = $_GET;
+                    $start_page = max(1, $page - 2);
+                    $end_page = min($total_pages, $page + 2);
+
+                    if ($start_page > 1) {
+                        $url_params['page'] = 1;
+                        echo '<a href="?' . http_build_query($url_params) . '" class="page-link">1</a>';
+                        if ($start_page > 2) {
+                            echo '<span class="page-link" style="border:none; background:transparent; box-shadow:none; cursor:default;">...</span>';
+                        }
+                    }
+
+                    for ($i = $start_page; $i <= $end_page; $i++): 
+                        $url_params['page'] = $i;
+                        $active = ($i == $page) ? 'active' : '';
+                ?>
+                    <a href="?<?php echo http_build_query($url_params); ?>" class="page-link <?php echo $active; ?>">
+                        <?php echo $i; ?>
+                    </a>
+                <?php endfor; ?>
+
+                <?php
+                    if ($end_page < $total_pages) {
+                        if ($end_page < $total_pages - 1) {
+                            echo '<span class="page-link" style="border:none; background:transparent; box-shadow:none; cursor:default;">...</span>';
+                        }
+                        $url_params['page'] = $total_pages;
+                        echo '<a href="?' . http_build_query($url_params) . '" class="page-link">' . $total_pages . '</a>';
+                    }
+                ?>
+            </div>
             <?php endif; ?>
-        </div>
 
-        <?php if ($total_pages > 1): ?>
-        <div class="pagination">
-            <?php 
-                // Giữ lại các tham số filter trên URL khi chuyển trang
-                $url_params = $_GET;
-                for ($i = 1; $i <= $total_pages; $i++): 
-                    $url_params['page'] = $i;
-                    $link = '?' . http_build_query($url_params);
-                    $active = ($i == $page) ? 'active' : '';
-            ?>
-                <a href="<?php echo $link; ?>" class="page-link <?php echo $active; ?>"><?php echo $i; ?></a>
-            <?php endfor; ?>
         </div>
-        <?php endif; ?>
-
     </div>
-</body>
-</html>
+</main>

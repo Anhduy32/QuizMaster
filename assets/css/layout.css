@@ -1,0 +1,16 @@
+/* Import variables vào đây */
+@import url('variables.css');
+
+body { font-family: var(--font-main); background: var(--bg-body); color: var(--text-main); margin: 0; }
+
+/* Cấu trúc Layout */
+.main-wrapper { margin-left: 260px; padding: 30px; } /* Sidebar mặc định 260px */
+.sidebar { position: fixed; left: 0; top: 0; width: 260px; height: 100vh; background: var(--white); border-right: 1px solid #edf2f7; }
+
+/* Component chung: Card */
+.widget-card, .doc-card { 
+    background: var(--white); 
+    border-radius: var(--radius-md); 
+    padding: 20px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+}

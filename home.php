@@ -10,7 +10,6 @@ if (!isset($_SESSION['username'])) {
 $ten_dang_nhap = $_SESSION['username'];
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 
-// [Các đoạn PHP lấy dữ liệu người dùng, thống kê, chuỗi đăng nhập... GIỮ NGUYÊN NHƯ CŨ CỦA BẠN]
 // LẤY THÔNG TIN NGƯỜI DÙNG
 $truy_van = "SELECT * FROM users WHERE username = ?";
 $chuan_bi = $conn->prepare($truy_van);
@@ -62,131 +61,159 @@ $res_suggest = $conn->query("SELECT * FROM quizzes WHERE status = 'completed' OR
 
 function getSubjectStyle($subject) {
     $sub = mb_strtolower($subject, 'UTF-8');
-    if (strpos($sub, 'toán') !== false) return ['bg' => 'linear-gradient(135deg, #4299e1, #3182ce)', 'icon' => 'fa-square-root-alt'];
-    if (strpos($sub, 'lý') !== false || strpos($sub, 'địa') !== false) return ['bg' => 'linear-gradient(135deg, #ed8936, #dd6b20)', 'icon' => 'fa-landmark'];
-    if (strpos($sub, 'anh') !== false) return ['bg' => 'linear-gradient(135deg, #f56565, #e53e3e)', 'icon' => 'fa-language'];
-    if (strpos($sub, 'tin') !== false) return ['bg' => 'linear-gradient(135deg, #9f7aea, #805ad5)', 'icon' => 'fa-laptop-code'];
-    return ['bg' => 'linear-gradient(135deg, #48bb78, #38a169)', 'icon' => 'fa-flask'];
+    if (strpos($sub, 'toán') !== false) return ['bg' => 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 'icon' => 'fa-square-root-alt', 'color' => '#667eea'];
+    if (strpos($sub, 'lý') !== false || strpos($sub, 'địa') !== false) return ['bg' => 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', 'icon' => 'fa-landmark', 'color' => '#f5576c'];
+    if (strpos($sub, 'anh') !== false) return ['bg' => 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', 'icon' => 'fa-language', 'color' => '#4facfe'];
+    if (strpos($sub, 'tin') !== false) return ['bg' => 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', 'icon' => 'fa-laptop-code', 'color' => '#43e97b'];
+    return ['bg' => 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', 'icon' => 'fa-flask', 'color' => '#fa709a'];
 }
+
+// ================= PAGE CONFIG =================
+$page_title = 'Bảng điều khiển - QuizMaster';
+$page_css = 'home.css';
+$show_auth_modal = false;
+
+require_once 'includes/layouts/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bảng điều khiển - QuizMaster</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/home.css?v=<?php echo time(); ?>">
-    <style>
-        .top-action-btns { display: flex; gap: 12px; margin-right: 25px; border-right: 2px solid #edf2f7; padding-right: 25px; }
-        .btn-header-action { padding: 10px 18px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
-        .btn-header-primary { background: var(--primary-teal); color: white; }
-        .btn-header-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(15, 92, 107, 0.2); }
-        .btn-header-secondary { background: #ebf8ff; color: #2b6cb0; }
-        .btn-header-secondary:hover { background: #bee3f8; transform: translateY(-2px); }
-    </style>
-</head>
-<body>
+<!-- ================= SIDEBAR ================= -->
+<?php require_once 'includes/sections/sidebar.php'; ?>
 
-    <?php include 'includes/sidebar.php'; ?>
 
-    <main class="main-wrapper">
-        <header class="top-header" style="justify-content: space-between; margin-bottom: 40px;">
+<!-- ================= NỘI DUNG CHÍNH ================= -->
+<main class="main-wrapper">
+    <div class="content-wrap">
+        
+        <!-- ===== HEADER GLASSMORPHISM ===== -->
+        <header class="top-header">
             <div class="header-title">
-                <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 0;">Tổng quan</h2>
+                <h2>
+                    <span class="badge-dashboard"><i class="fas fa-chart-pie"></i> Dashboard</span>
+                    Tổng quan
+                </h2>
             </div>
-            
             <div class="header-actions">
                 <div class="top-action-btns">
-                    <a href="modules/quiz/create_step1.php" class="btn-header-action btn-header-primary">
-                        <i class="fas fa-plus"></i> Tạo đề mới
+                    <a href="/WebTaoBoDeTuDong/modules/quiz/create_quiz/step1_create_quiz.php" class="btn-header-action btn-header-primary">
+                        <i class="fas fa-plus-circle"></i> Tạo đề mới
                     </a>
-                    <a href="modules/quiz/add_question_hub.php" class="btn-header-action btn-header-secondary">
+                    <a href="/WebTaoBoDeTuDong/modules/quiz/add_question_hub.php" class="btn-header-action btn-header-secondary">
                         <i class="fas fa-puzzle-piece"></i> Thêm câu hỏi
                     </a>
                 </div>
-
-                <div class="btn-notification"><i class="far fa-bell"></i></div>
-                <a href="modules/user/update_profile.php" class="user-profile-widget" title="Cài đặt tài khoản">
+                <div class="btn-notification">
+                    <i class="far fa-bell"></i>
+                    <span class="badge-count">3</span>
+                </div>
+                <a href="/WebTaoBoDeTuDong/modules/user/update_profile.php" class="user-profile-widget">
                     <img src="<?php echo htmlspecialchars($avatar_url); ?>" alt="Avatar">
                     <span><?php echo htmlspecialchars($ten_goi); ?></span>
+                    <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: #94a3b8;"></i>
                 </a>
             </div>
         </header>
 
         <div class="dashboard-grid">
-            
             <div class="main-content">
                 
+                <!-- ===== WELCOME BANNER ===== -->
                 <div class="welcome-banner">
                     <div class="welcome-text">
-                        <h1><?php echo $loi_chao; ?>, <?php echo htmlspecialchars($ten_goi); ?>! 👋</h1>
-                        <p>Bạn đã hoàn thành <?php echo $tong_bai_da_lam; ?> bài kiểm tra. Tiếp tục duy trì phong độ nhé!</p>
-                        <a href="explore.php" class="btn-random-quiz"><i class="fas fa-random"></i> Khám phá ngay</a>
+                        <h1><?php echo $loi_chao; ?>, <span class="highlight-name"><?php echo htmlspecialchars($ten_goi); ?></span> 👋</h1>
+                        <p>Bạn đã hoàn thành <strong><?php echo $tong_bai_da_lam; ?></strong> bài kiểm tra. Tiếp tục duy trì phong độ nhé!</p>
+                        <a href="/WebTaoBoDeTuDong/modules/quiz/sum_question.php" class="btn-random-quiz">
+                            <i class="fas fa-compass"></i> Khám phá ngay
+                        </a>
                     </div>
-                    <div style="font-size: 6rem; opacity: 0.9; margin-right: 20px;"><i class="fas fa-rocket"></i></div>
+                    <div class="decoration-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
                 </div>
 
+                <!-- ===== QUICK STATS ===== -->
                 <div class="quick-stats-row">
                     <div class="stat-card">
-                        <div class="stat-icon" style="background: #ebf8ff; color: #3182ce;"><i class="fas fa-tasks"></i></div>
+                        <div class="stat-icon blue"><i class="fas fa-tasks"></i></div>
                         <div class="stat-info">
                             <h4>Đã hoàn thành</h4>
-                            <span><?php echo $tong_bai_da_lam; ?> <small style="font-size: 14px; color: #718096;">bài</small></span>
+                            <span><?php echo $tong_bai_da_lam; ?> <small>bài</small></span>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon" style="background: #f0fff4; color: #38a169;"><i class="fas fa-star"></i></div>
+                        <div class="stat-icon green"><i class="fas fa-star"></i></div>
                         <div class="stat-info">
                             <h4>Điểm trung bình</h4>
-                            <span><?php echo $diem_trung_binh; ?> <small style="font-size: 14px; color: #718096;">/10</small></span>
+                            <span><?php echo $diem_trung_binh; ?> <small>/10</small></span>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon" style="background: #fffaf0; color: #dd6b20;"><i class="fas fa-fire"></i></div>
+                        <div class="stat-icon orange"><i class="fas fa-fire"></i></div>
                         <div class="stat-info">
                             <h4>Chuỗi đăng nhập</h4>
-                            <span><?php echo $chuoi_hien_tai; ?> <small style="font-size: 14px; color: #718096;">ngày</small></span>
+                            <span><?php echo $chuoi_hien_tai; ?> <small>ngày</small></span>
                         </div>
                     </div>
                 </div>
 
+                <!-- ===== SUGGESTED QUIZZES ===== -->
                 <section style="margin-bottom: 40px;">
-                    <div class="section-header">
-                        <h2 class="section-title">Gợi ý luyện tập cho bạn</h2>
-                        <a href="explore.php" class="view-all">Xem tất cả <i class="fas fa-angle-right"></i></a>
+                    <div class="section-header-custom">
+                        <h2 class="section-title">
+                            <span class="icon-wrapper"><i class="fas fa-lightbulb" style="color: #f59e0b;"></i></span>
+                            Gợi ý luyện tập
+                        </h2>
+                        <a href="/WebTaoBoDeTuDong/modules/quiz/sum_question.php" class="view-all-link">
+                            Xem tất cả <i class="fas fa-arrow-right"></i>
+                        </a>
                     </div>
+                    
                     <div class="quiz-scroll-container">
                         <?php if ($res_suggest && $res_suggest->num_rows > 0): ?>
                             <?php while ($quiz = $res_suggest->fetch_assoc()): 
                                 $style = getSubjectStyle($quiz['subject']);
                             ?>
-                                <a href="modules/quiz/take_quiz.php?id=<?php echo $quiz['id']; ?>" class="quiz-card">
-                                    <div class="card-icon" style="background: <?php echo $style['bg']; ?>">
-                                        <i class="fas <?php echo $style['icon']; ?>"></i>
+                                <a href="/WebTaoBoDeTuDong/modules/quiz/take_quiz.php?id=<?php echo $quiz['id']; ?>" class="quiz-card-modern">
+                                    <div class="card-top">
+                                        <div class="card-icon" style="background: <?php echo $style['bg']; ?>">
+                                            <i class="fas <?php echo $style['icon']; ?>"></i>
+                                        </div>
+                                        <span class="card-subject" style="color: <?php echo $style['color']; ?>;">
+                                            <?php echo htmlspecialchars($quiz['subject']); ?>
+                                        </span>
                                     </div>
-                                    <span class="card-subject"><?php echo htmlspecialchars($quiz['subject']); ?></span>
                                     <h3 class="card-title"><?php echo htmlspecialchars($quiz['title']); ?></h3>
-                                    <div class="card-meta">
-                                        <span><i class="fas fa-layer-group"></i> <?php echo $quiz['num_questions']; ?> Câu</span>
-                                        <div class="btn-play"><i class="fas fa-play"></i></div>
+                                    <div class="card-footer">
+                                        <span class="card-meta">
+                                            <i class="fas fa-layer-group"></i> <?php echo $quiz['num_questions']; ?> Câu
+                                        </span>
+                                        <div class="btn-play">
+                                            <i class="fas fa-play"></i>
+                                        </div>
                                     </div>
                                 </a>
                             <?php endwhile; ?>
                         <?php else: ?>
-                            <p style="color: var(--text-muted);">Cộng đồng chưa có đề thi nào.</p>
+                            <p style="color: #94a3b8; grid-column: 1/-1; text-align: center; padding: 40px 0; font-size: 1rem;">
+                                <i class="fas fa-inbox" style="display: block; font-size: 3rem; opacity: 0.3; margin-bottom: 12px;"></i>
+                                Cộng đồng chưa có đề thi nào.
+                            </p>
                         <?php endif; ?>
                     </div>
                 </section>
-
             </div>
 
+            <!-- ===== RIGHT SIDEBAR ===== -->
             <div class="right-sidebar">
-                <div class="widget-card">
-                    <h3 class="widget-title"><i class="fas fa-bullseye" style="color: var(--primary-teal);"></i> Mục tiêu tuần này</h3>
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">Hoàn thành <?php echo $muc_tieu_tuan; ?> bài kiểm tra</p>
+                
+                <!-- Goal Widget -->
+                <div class="widget-card-glass">
+                    <h3 class="widget-title">
+                        <span class="title-icon"><i class="fas fa-bullseye"></i></span>
+                        Mục tiêu tuần này
+                    </h3>
+                    <p style="font-size: 0.9rem; color: #64748b; margin: 0 0 14px 0;">
+                        Hoàn thành <strong style="color: #0f5c6b;"><?php echo $muc_tieu_tuan; ?></strong> bài kiểm tra
+                    </p>
                     <div class="goal-progress">
                         <?php 
                             $tien_do = ($weekly_taken / $muc_tieu_tuan) * 100;
@@ -195,32 +222,65 @@ function getSubjectStyle($subject) {
                         <div class="goal-fill" style="width: <?php echo $tien_do; ?>%;"></div>
                     </div>
                     <div class="goal-text">
-                        <span><?php echo $weekly_taken; ?> bài đã làm</span>
+                        <span><i class="fas fa-check-circle" style="color: #0f5c6b;"></i> <?php echo $weekly_taken; ?> bài đã làm</span>
                         <span><?php echo $muc_tieu_tuan; ?> bài</span>
                     </div>
+                    <?php if($weekly_taken >= $muc_tieu_tuan): ?>
+                        <div class="goal-complete">
+                            <i class="fas fa-trophy" style="font-size: 1.2rem;"></i>
+                            Hoàn thành! Bạn thật tuyệt vời!
+                        </div>
+                    <?php endif; ?>
                 </div>
 
-                <div class="widget-card">
-                    <h3 class="widget-title"><i class="fas fa-history" style="color: var(--primary-teal);"></i> Hoạt động gần đây</h3>
+                <!-- Recent Activity -->
+                <div class="widget-card-glass">
+                    <h3 class="widget-title">
+                        <span class="title-icon"><i class="fas fa-history"></i></span>
+                        Hoạt động gần đây
+                    </h3>
                     <div class="activity-list">
                         <?php if ($res_history && $res_history->num_rows > 0): ?>
                             <?php while ($history = $res_history->fetch_assoc()): ?>
-                                <div class="activity-item">
+                                <div class="activity-item-modern">
                                     <div class="activity-icon"><i class="fas fa-check"></i></div>
                                     <div class="activity-info">
                                         <h4><?php echo htmlspecialchars($history['title']); ?></h4>
-                                        <p>Đạt <?php echo $history['score']; ?> điểm • <?php echo date('d/m', strtotime($history['completed_at'])); ?></p>
+                                        <p>
+                                            <span class="score-highlight"><?php echo $history['score']; ?> điểm</span>
+                                            <span>•</span>
+                                            <span><?php echo date('d/m', strtotime($history['completed_at'])); ?></span>
+                                        </p>
                                     </div>
                                 </div>
                             <?php endwhile; ?>
-                            <a href="modules/user/history.php" class="view-all-history">Xem toàn bộ lịch sử</a>
+                            <a href="/WebTaoBoDeTuDong/modules/user/history.php" class="view-all-history">
+                                Xem toàn bộ lịch sử <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>
+                            </a>
                         <?php else: ?>
-                            <p style="font-size: 0.9rem; color: var(--text-muted); text-align: center; padding: 10px 0;">Bạn chưa làm bài kiểm tra nào trong tuần này.</p>
+                            <div style="text-align: center; padding: 24px 0; color: #94a3b8;">
+                                <i class="fas fa-inbox" style="display: block; font-size: 2.5rem; opacity: 0.3; margin-bottom: 8px;"></i>
+                                <p style="margin: 0; font-size: 0.9rem;">Chưa có hoạt động nào</p>
+                            </div>
                         <?php endif; ?>
                     </div>
                 </div>
+
+                <!-- Quick Tip -->
+                <div class="widget-tip">
+                    <div class="tip-content">
+                        <div class="tip-icon"><i class="fas fa-lightbulb"></i></div>
+                        <div class="tip-text">
+                            <h4>💡 Mẹo học tập</h4>
+                            <p>Làm ít nhất 2 bài mỗi ngày để ghi nhớ kiến thức tốt hơn.</p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </main>
-</body>
-</html>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <?php require_once 'includes/layouts/footer.php'; ?>
+</main>

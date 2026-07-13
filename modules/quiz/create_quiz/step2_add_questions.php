@@ -11,18 +11,16 @@ $quiz_id = isset($_GET['quiz_id']) ? (int)$_GET['quiz_id'] : 0;
 $loi = '';
 $thong_bao = '';
 
-// Kiểm tra quyền sở hữu đề thi
 $check_quiz = $conn->prepare("SELECT title FROM quizzes WHERE id = ? AND creator_username = ?");
 $check_quiz->bind_param("is", $quiz_id, $_SESSION['username']);
 $check_quiz->execute();
 $quiz_result = $check_quiz->get_result();
 
 if ($quiz_result->num_rows == 0) {
-    die("<div style='text-align:center; padding:50px; font-family:sans-serif;'>Đề thi không tồn tại hoặc bạn không có quyền chỉnh sửa! <a href='../../../index.php'>Về trang chủ</a></div>");
+    die("<div style='text-align:center; padding:50px; font-family:sans-serif;'>Đề thi không tồn tại hoặc bạn không có quyền chỉnh sửa! <a href='../../../home.php'>Về trang chủ</a></div>");
 }
 $quiz_info = $quiz_result->fetch_assoc();
 
-// Xử lý khi bấm nút "Thêm Câu Hỏi"
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'add_question') {
     $question_text = trim($_POST['question_text']);
     $option_a = trim($_POST['option_a']);
@@ -39,7 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
         $stmt_q->bind_param("issssss", $quiz_id, $question_text, $option_a, $option_b, $option_c, $option_d, $correct_option);
         
         if ($stmt_q->execute()) {
-            // Tự động tăng số lượng câu hỏi trong bảng quizzes
             $conn->query("UPDATE quizzes SET num_questions = num_questions + 1 WHERE id = $quiz_id");
             $thong_bao = "Đã thêm câu hỏi thành công!";
         } else {
@@ -48,15 +45,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
     }
 }
 
-// Xử lý khi bấm nút "Hoàn tất & Xuất bản"
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'finish_quiz') {
-    // Chuyển trạng thái từ draft sang completed
     $conn->query("UPDATE quizzes SET status = 'completed' WHERE id = $quiz_id");
     header("Location: success.php?quiz_id=" . $quiz_id);
     exit();
 }
 
-// Lấy danh sách câu hỏi đã thêm để hiển thị bên phải
 $list_q = $conn->query("SELECT * FROM questions WHERE quiz_id = $quiz_id ORDER BY id DESC");
 ?>
 
@@ -66,8 +60,19 @@ $list_q = $conn->query("SELECT * FROM questions WHERE quiz_id = $quiz_id ORDER B
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thêm Câu Hỏi - QuizMaster</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Tích hợp MathJax Render Toán học cho Admin Panel -->
+    <script>
+        MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    
     <style>
         body { font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0; padding: 20px; color: #2d3748; }
         .page-header { max-width: 1200px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: center; }
@@ -158,13 +163,10 @@ $list_q = $conn->query("SELECT * FROM questions WHERE quiz_id = $quiz_id ORDER B
                 <div class="correct-answer-select">
                     <input type="radio" id="ans_a" name="correct_option" value="A" required>
                     <label for="ans_a">Đáp án A</label>
-                    
                     <input type="radio" id="ans_b" name="correct_option" value="B">
                     <label for="ans_b">Đáp án B</label>
-                    
                     <input type="radio" id="ans_c" name="correct_option" value="C">
                     <label for="ans_c">Đáp án C</label>
-                    
                     <input type="radio" id="ans_d" name="correct_option" value="D">
                     <label for="ans_d">Đáp án D</label>
                 </div>
@@ -182,15 +184,15 @@ $list_q = $conn->query("SELECT * FROM questions WHERE quiz_id = $quiz_id ORDER B
             <?php if($list_q->num_rows > 0): ?>
                 <?php $i = $list_q->num_rows; while($q = $list_q->fetch_assoc()): ?>
                 <div class="q-item">
-                    <h4>Câu <?php echo $i; ?>: <?php echo htmlspecialchars($q['content']); ?></h4>
-                    <div class="q-options">
+                    <!-- SỬ DỤNG white-space ĐỂ HIỂN THỊ ĐẸP CÔNG THỨC TOÁN & MA TRẬN -->
+                    <h4 style="white-space: pre-wrap; word-wrap: break-word; font-weight: 600; line-height: 1.5;">Câu <?php echo $i; ?>: <?php echo htmlspecialchars($q['content']); ?></h4>
+                    <div class="q-options" style="white-space: pre-wrap; word-wrap: break-word;">
                         <div><strong>A.</strong> <?php echo htmlspecialchars($q['opt_a']); ?> <?php if($q['correct_opt']=='A') echo "<span class='correct-badge'>Đúng</span>"; ?></div>
                         <div><strong>B.</strong> <?php echo htmlspecialchars($q['opt_b']); ?> <?php if($q['correct_opt']=='B') echo "<span class='correct-badge'>Đúng</span>"; ?></div>
                         <div><strong>C.</strong> <?php echo htmlspecialchars($q['opt_c']); ?> <?php if($q['correct_opt']=='C') echo "<span class='correct-badge'>Đúng</span>"; ?></div>
                         <div><strong>D.</strong> <?php echo htmlspecialchars($q['opt_d']); ?> <?php if($q['correct_opt']=='D') echo "<span class='correct-badge'>Đúng</span>"; ?></div>
                     </div>
                 </div>
-                    </div>
                 <?php $i--; endwhile; ?>
             <?php else: ?>
                 <div style="text-align:center; color:#a0aec0; padding: 40px 0;">
