@@ -1,0 +1,40 @@
+/* ================= GIAO DIỆN KẾT QUẢ BÀI THI ================= */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+body { background: #f4f7f6; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+
+.result-card {
+    background: white; border-radius: 24px; padding: 50px 40px;
+    max-width: 500px; width: 100%; text-align: center;
+    box-shadow: 0 15px 35px rgba(15, 92, 107, 0.1);
+}
+
+.trophy-icon {
+    font-size: 70px; color: #f6ad55; margin-bottom: 20px;
+    animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+@keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+h1 { color: #2d3748; font-size: 1.8rem; margin-bottom: 10px; }
+p.quiz-name { color: #718096; margin-bottom: 30px; font-weight: 500; }
+
+.score-circle {
+    width: 150px; height: 150px; border-radius: 50%; margin: 0 auto 30px;
+    background: #ebf8ff; border: 8px solid #3182ce;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.score-val { font-size: 3rem; font-weight: 800; color: #2b6cb0; line-height: 1; }
+.score-lbl { font-size: 1rem; color: #4299e1; font-weight: 600; margin-top: 5px; }
+
+.stats-row {
+    display: flex; justify-content: space-around; background: #f8fafc;
+    padding: 20px; border-radius: 16px; margin-bottom: 30px;
+}
+.stat-item { display: flex; flex-direction: column; gap: 5px; }
+.stat-val { font-size: 1.3rem; font-weight: 800; color: #2d3748; }
+.stat-lbl { font-size: 0.85rem; color: #718096; }
+
+.btn-home {
+    display: block; background: #0f5c6b; color: white; text-decoration: none;
+    padding: 16px; border-radius: 12px; font-weight: 700; transition: 0.3s;
+}
+.btn-home:hover { background: #0a4a56; transform: translateY(-2px); }

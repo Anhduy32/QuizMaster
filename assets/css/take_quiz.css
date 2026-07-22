@@ -1,0 +1,262 @@
+/* ================= TAKE_QUIZ.CSS - GIAO DIỆN LÀM BÀI THI (FOCUS MODE) ================= */
+:root {
+    --primary-teal: #0f5c6b;
+    --primary-hover: #0a4a56;
+    --accent-teal: #2c9c8c;
+    --bg-main: #f8fafc;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-light: #e2e8f0;
+    --glass-shadow: 0 4px 20px rgba(15, 92, 107, 0.05);
+    --transition: all 0.2s ease-in-out;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+body { background: var(--bg-main); color: var(--text-main); padding-top: 80px; scroll-behavior: smooth; }
+
+/* ===== NAVBAR CỐ ĐỊNH (FOCUS HEADER) ===== */
+.exam-header {
+    position: fixed; top: 0; left: 0; width: 100%;
+    background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 40px; z-index: 1000; border-bottom: 1px solid var(--border-light);
+}
+.exam-title { 
+    font-size: 1.2rem; font-weight: 800; color: var(--text-main); 
+    display: flex; align-items: center; gap: 10px;
+}
+.exam-title i { color: var(--primary-teal); font-size: 1.4rem; }
+
+.btn-exit {
+    color: var(--text-muted); text-decoration: none; font-weight: 600;
+    display: flex; align-items: center; gap: 8px; padding: 8px 16px;
+    border-radius: 50px; background: #f1f5f9; transition: var(--transition);
+}
+.btn-exit:hover { background: #fee2e2; color: #ef4444; }
+
+/* ===== BỐ CỤC CHÍNH ===== */
+.exam-container { 
+    max-width: 1200px; margin: 30px auto; 
+    display: grid; grid-template-columns: 1fr 320px; gap: 30px; padding: 0 20px; 
+}
+
+/* ===== KHU VỰC CÂU HỎI ===== */
+.question-card {
+    background: white; border-radius: 20px; padding: 35px;
+    margin-bottom: 30px; box-shadow: var(--glass-shadow);
+    border: 1px solid var(--border-light); scroll-margin-top: 100px;
+}
+.q-number { 
+    font-weight: 800; color: var(--primary-teal); margin-bottom: 15px; 
+    font-size: 1.1rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;
+}
+.q-content { font-size: 1.15rem; font-weight: 600; line-height: 1.6; margin-bottom: 25px; color: #334155; }
+
+/* Đáp án Trắc nghiệm */
+.options-grid { display: grid; gap: 12px; }
+.option-label {
+    display: flex; align-items: center; padding: 16px 20px;
+    border: 2px solid #edf2f7; border-radius: 14px; cursor: pointer;
+    transition: var(--transition); background: white; font-weight: 500; color: #475569;
+}
+.option-label:hover { border-color: #cbd5e0; background: #f8fafc; }
+
+/* Custom Radio Button */
+.option-label input[type="radio"] { display: none; }
+.custom-radio {
+    width: 24px; height: 24px; border: 2px solid #cbd5e0;
+    border-radius: 50%; margin-right: 15px; display: flex;
+    align-items: center; justify-content: center; flex-shrink: 0;
+    transition: var(--transition);
+}
+.option-label input[type="radio"]:checked + .custom-radio {
+    border-color: var(--primary-teal);
+}
+.option-label input[type="radio"]:checked + .custom-radio::after {
+    content: ''; width: 12px; height: 12px;
+    background: var(--primary-teal); border-radius: 50%;
+}
+
+/* Hiệu ứng Đổi màu cả khung khi chọn (Sử dụng CSS :has hiện đại) */
+.option-label:has(input[type="radio"]:checked) {
+    border-color: var(--primary-teal); background: #f0fdfa; color: var(--primary-teal); font-weight: 600;
+}
+
+/* Đáp án Tự luận */
+.essay-input { 
+    width: 100%; height: 160px; padding: 20px; 
+    border: 2px solid #edf2f7; border-radius: 14px; font-family: 'Inter', sans-serif; 
+    resize: vertical; outline: none; font-size: 1rem; transition: var(--transition);
+    background: #f8fafc;
+}
+.essay-input:focus { border-color: var(--primary-teal); background: white; box-shadow: 0 0 0 4px rgba(15, 92, 107, 0.1); }
+
+/* ===== SIDEBAR TIẾN ĐỘ ===== */
+.progress-sidebar { 
+    background: white; padding: 25px; border-radius: 20px; 
+    border: 1px solid var(--border-light); box-shadow: var(--glass-shadow);
+    position: sticky; top: 100px; height: fit-content; 
+}
+.sidebar-title { 
+    font-weight: 800; margin-bottom: 20px; font-size: 1.1rem; 
+    border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; color: var(--text-main);
+}
+.progress-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 25px; }
+.q-badge { 
+    width: 100%; aspect-ratio: 1; display: flex; justify-content: center; align-items: center; 
+    background: #f1f5f9; border-radius: 10px; font-weight: 700; font-size: 0.95rem; 
+    color: var(--text-muted); transition: var(--transition); text-decoration: none; border: 1px solid transparent;
+}
+.q-badge:hover { border-color: #cbd5e0; transform: translateY(-2px); }
+.q-badge.done { background: var(--primary-teal); color: white; box-shadow: 0 4px 10px rgba(15, 92, 107, 0.2); }
+
+/* Nút nộp bài */
+.btn-submit {
+    width: 100%; padding: 18px; background: #10b981; color: white; 
+    border: none; border-radius: 14px; font-size: 1.1rem; font-weight: 800; 
+    cursor: pointer; transition: var(--transition); display: flex; justify-content: center; align-items: center; gap: 10px;
+}
+.btn-submit:hover { background: #059669; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(16, 185, 129, 0.25); }
+
+/* Responsive */
+@media (max-width: 992px) { 
+    .exam-container { grid-template-columns: 1fr; } 
+    .progress-sidebar { position: static; margin-bottom: 40px; }
+}
+@media (max-width: 768px) {
+    .exam-header { padding: 15px 20px; }
+    .exam-title span { display: none; /* Ẩn bớt chữ trên mobile */ }
+}
+
+        .quiz-nav-buttons {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 10px; padding-top: 25px; border-top: 2px dashed var(--border-light);
+        }
+        .btn-nav {
+            padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 1rem;
+            border: none; cursor: pointer; transition: var(--transition);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-nav-prev { background: #e2e8f0; color: #475569; }
+        .btn-nav-prev:hover { background: #cbd5e0; transform: translateX(-3px); }
+        .btn-nav-next { background: var(--primary-teal); color: white; }
+        .btn-nav-next:hover { background: var(--primary-hover); transform: translateX(3px); box-shadow: 0 4px 12px rgba(15,92,107,0.2); }
+        .btn-nav-submit { background: #10b981; color: white; }
+        .btn-nav-submit:hover { background: #059669; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(16,185,129,0.25); }
+        .page-indicator { font-weight: 700; color: var(--text-muted); background: white; padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-light); }
+        
+        /* Chỉnh lại con trỏ cho Sidebar Badges */
+        .q-badge { cursor: pointer; user-select: none; }
+        
+        /* CSS cho File PDF Container */
+        .pdf-container {
+            background: #f8fafc;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 15px 0 20px 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .pdf-container iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            display: block;
+        }
+        
+        .pdf-container .pdf-header {
+            background: #f1f5f9;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .pdf-container .pdf-header .pdf-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: #1a202c;
+        }
+        
+        .pdf-container .pdf-header .pdf-title i {
+            color: #dc2626;
+            font-size: 1.2rem;
+        }
+        
+        .pdf-container .pdf-header .pdf-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .pdf-container .pdf-header .pdf-actions a {
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .pdf-container .pdf-header .pdf-actions .btn-download {
+            background: #dc2626;
+            color: white;
+        }
+        
+        .pdf-container .pdf-header .pdf-actions .btn-download:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+        }
+        
+        .pdf-container .pdf-header .pdf-actions .btn-view {
+            background: #e2e8f0;
+            color: #475569;
+        }
+        
+        .pdf-container .pdf-header .pdf-actions .btn-view:hover {
+            background: #cbd5e0;
+        }
+        
+        .pdf-container .pdf-fallback {
+            padding: 40px 20px;
+            text-align: center;
+            color: #64748b;
+        }
+        
+        .pdf-container .pdf-fallback i {
+            font-size: 3rem;
+            color: #cbd5e0;
+            margin-bottom: 12px;
+            display: block;
+        }
+        
+        .pdf-container .pdf-fallback a {
+            color: var(--primary-teal);
+            font-weight: 600;
+            text-decoration: underline;
+        }
+        
+        /* Responsive cho PDF */
+        @media (max-width: 768px) {
+            .pdf-container iframe {
+                height: 400px;
+            }
+            
+            .pdf-container .pdf-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+                text-align: center;
+            }
+            
+            .pdf-container .pdf-header .pdf-actions {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }

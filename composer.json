@@ -1,0 +1,6 @@
+{
+    "require": {
+        "smalot/pdfparser": "^2.0",
+        "dompdf/dompdf": "^2.0"
+    }
+}
