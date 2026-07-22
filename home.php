@@ -156,10 +156,6 @@ require_once 'includes/layouts/header.php';
                 </div>
 
                 <!-- ===== SUGGESTED QUIZZES ===== -->
-<<<<<<< HEAD
-                <!-- ===== SUGGESTED QUIZZES ===== -->
-=======
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                 <section style="margin-bottom: 40px;">
                     <div class="section-header-custom">
                         <h2 class="section-title">
@@ -176,12 +172,8 @@ require_once 'includes/layouts/header.php';
                             <?php while ($quiz = $res_suggest->fetch_assoc()): 
                                 $style = getSubjectStyle($quiz['subject']);
                             ?>
-<<<<<<< HEAD
                                 <!-- Cập nhật link trỏ về quiz_detail.php -->
                                 <a href="/WebTaoBoDeTuDong/modules/quiz/quiz_detail.php?id=<?php echo $quiz['id']; ?>" class="quiz-card-modern">
-=======
-                                <a href="/WebTaoBoDeTuDong/modules/quiz/take_quiz.php?id=<?php echo $quiz['id']; ?>" class="quiz-card-modern">
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                                     <div class="card-top">
                                         <div class="card-icon" style="background: <?php echo $style['bg']; ?>">
                                             <i class="fas <?php echo $style['icon']; ?>"></i>
@@ -190,7 +182,6 @@ require_once 'includes/layouts/header.php';
                                             <?php echo htmlspecialchars($quiz['subject']); ?>
                                         </span>
                                     </div>
-<<<<<<< HEAD
                                     
                                     <h3 class="card-title">
                                         <?php echo htmlspecialchars($quiz['title']); ?>
@@ -207,12 +198,6 @@ require_once 'includes/layouts/header.php';
                                             <i class="fas fa-layer-group"></i> 
                                             <!-- Hiển thị linh hoạt số câu hoặc nhãn PDF -->
                                             <?php echo (int)$quiz['num_questions'] > 0 ? (int)$quiz['num_questions'] . ' Câu' : 'Đề PDF'; ?>
-=======
-                                    <h3 class="card-title"><?php echo htmlspecialchars($quiz['title']); ?></h3>
-                                    <div class="card-footer">
-                                        <span class="card-meta">
-                                            <i class="fas fa-layer-group"></i> <?php echo $quiz['num_questions']; ?> Câu
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                                         </span>
                                         <div class="btn-play">
                                             <i class="fas fa-play"></i>

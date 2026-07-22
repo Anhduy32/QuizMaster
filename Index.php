@@ -14,13 +14,10 @@ if ($is_logged_in) {
     $chuan_bi->execute();
     $ket_qua = $chuan_bi->get_result();
     $nguoi_dung = $ket_qua->fetch_assoc();
-<<<<<<< HEAD
+    
     if ($nguoi_dung) {
         $ho_va_ten = $nguoi_dung['full_name'] ?? $ten_dang_nhap;
     }
-=======
-    if ($nguoi_dung) { $ho_va_ten = $nguoi_dung['full_name'] ?? $ten_dang_nhap; }
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
 }
 
 // THỐNG KÊ
@@ -28,11 +25,7 @@ $query_members = "SELECT COUNT(id) AS total FROM users";
 $result_members = $conn->query($query_members);
 $total_members = ($result_members && $result_members->num_rows > 0) ? $result_members->fetch_assoc()['total'] : 0;
 
-<<<<<<< HEAD
 $query_quizzes = "SELECT COUNT(id) AS total FROM quizzes WHERE status = 'completed'";
-=======
-$query_quizzes = "SELECT COUNT(id) AS total FROM quizzes WHERE status = 'completed'"; 
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
 $result_quizzes = $conn->query($query_quizzes);
 $total_quizzes = ($result_quizzes && $result_quizzes->num_rows > 0) ? $result_quizzes->fetch_assoc()['total'] : 0;
 
@@ -59,12 +52,7 @@ function getSubjectIcon($subject) {
 // ================= PAGE CONFIG =================
 $page_title = 'QuizMaster - Nền Tảng Học Tập & Thi Trắc Nghiệm';
 $page_css = 'index.css';
-<<<<<<< HEAD
-$show_auth_modal = true;
-=======
 $show_auth_modal = true; // Hiển thị modal đăng nhập
-$page_inline_js = '';
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
 
 // ================= HEADER =================
 require_once 'includes/layouts/header.php';
@@ -89,7 +77,6 @@ require_once 'includes/layouts/header.php';
 <?php require_once 'includes/sections/cta.php'; ?>
 
 <!-- ================= FOOTER ================= -->
-<<<<<<< HEAD
 <?php require_once 'includes/layouts/footer.php'; ?>
 
 <!-- ================= MAIN.JS ================= -->
@@ -332,68 +319,3 @@ require_once 'includes/layouts/header.php';
         console.log('QuizMaster initialized successfully!');
     });
 </script>
-=======
-<?php
-$page_inline_js = '
-    const isLoggedIn = ' . ($is_logged_in ? 'true' : 'false') . ';
-
-    document.querySelectorAll(".check-auth-link").forEach(link => {
-        link.addEventListener("click", function(e) {
-            e.preventDefault();
-            if (isLoggedIn) { 
-                window.location.href = this.getAttribute("data-target"); 
-            } else { 
-                document.getElementById("authModal").classList.add("active"); 
-            }
-        });
-    });
-
-    const sections = document.querySelectorAll("section[id]");
-    const navLinks = document.querySelectorAll(".nav-link:not(.btn-nav-dashboard)");
-
-    function activateMenu() {
-        let scrollY = window.pageYOffset || document.documentElement.scrollTop;
-        sections.forEach(current => {
-            const sectionHeight = current.offsetHeight;
-            const sectionTop = current.offsetTop - 100;
-            const sectionId = current.getAttribute("id");
-            if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-                navLinks.forEach(link => {
-                    link.classList.remove("active");
-                    if (link.getAttribute("href") === "#" + sectionId) { link.classList.add("active"); }
-                });
-            }
-        });
-    }
-    window.addEventListener("scroll", activateMenu);
-
-    const counters = document.querySelectorAll(".stat-number");
-    const speed = 200;
-
-    const runCounters = () => {
-        counters.forEach(counter => {
-            const updateCount = () => {
-                const target = +counter.getAttribute("data-target");
-                const count = +counter.innerText;
-                const inc = target / speed;
-                if (count < target) {
-                    counter.innerText = Math.ceil(count + inc);
-                    setTimeout(updateCount, 10);
-                } else { counter.innerText = target; }
-            };
-            updateCount();
-        });
-    }
-
-    let counted = false;
-    window.addEventListener("scroll", () => {
-        const statsSection = document.getElementById("stats");
-        if (!counted && window.scrollY + window.innerHeight > statsSection.offsetTop + 100) {
-            runCounters(); counted = true;
-        }
-    });
-';
-
-require_once 'includes/layouts/footer.php';
-?>
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8

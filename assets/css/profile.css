@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /* ============================================================
    THƯ VIỆN CỦA TÔI UI - TEAL THEME
    ============================================================ */
@@ -362,74 +361,10 @@
     gap: 20px;
     padding: 0 30px 30px;
     margin-top: -50px;
-=======
-/* ================= HỆ THỐNG MÀU CAO CẤP ================= */
-:root {
-    --primary-teal: #2a5d6a;       
-    --primary-hover: #1e444e;      
-    --accent-teal: #4fd1c5;        /* Xanh ngọc nổi bật */
-    --bg-main: #f0f7f7;    
-    
-    --glass-bg: rgba(255, 255, 255, 0.75);         
-    --glass-border: rgba(255, 255, 255, 0.9);      
-    --glass-shadow: 0 10px 40px rgba(42, 93, 106, 0.08); 
-    
-    --text-main: #1a202c;
-    --text-muted: #718096;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Open Sans', sans-serif; }
-
-body {
-    background: var(--bg-main);
-    background-image: radial-gradient(circle at top right, #e0f2f1 0%, transparent 40%),
-                      radial-gradient(circle at bottom left, #e0f2f1 0%, transparent 40%);
-    color: var(--text-main);
-    min-height: 100vh;
-    padding-bottom: 60px;
-}
-
-.container { max-width: 1150px; margin: 40px auto; padding: 0 20px; }
-
-/* ================= LỚP KÍNH MỜ CHUNG ================= */
-.glass-panel {
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
-    border-radius: 24px; 
-    overflow: hidden;
-}
-
-/* ================= HEADER HỒ SƠ (CÓ ẢNH BÌA) ================= */
-.profile-cover {
-    height: 200px;
-    background: linear-gradient(120deg, var(--primary-teal), var(--accent-teal));
-    position: relative;
-}
-
-.profile-cover::after {
-    content: '';
-    position: absolute;
-    width: 100%; height: 100%;
-    background: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M10 10h10v10H10z" fill="rgba(255,255,255,0.05)"/></svg>') repeat;
-}
-
-.profile-main-info {
-    padding: 0 40px 40px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-top: -65px; /* Kéo nội dung đè lên ảnh bìa */
-    position: relative;
-    z-index: 2;
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
 }
 
 .user-identity {
     display: flex;
-<<<<<<< HEAD
     flex-wrap: wrap;
     align-items: center;
     gap: 20px;
@@ -517,58 +452,6 @@ body {
 /* ============================================================
    PROFILE BODY
    ============================================================ */
-=======
-    align-items: flex-end;
-    gap: 25px;
-}
-
-.avatar-wrapper { position: relative; }
-.profile-avatar {
-    width: 150px; height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 6px solid white;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    background: white;
-}
-
-.avatar-badge {
-    position: absolute;
-    bottom: 8px; right: 8px;
-    background: linear-gradient(135deg, #4fd1c5, #2a5d6a);
-    color: white;
-    width: 38px; height: 38px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    border: 3px solid white;
-    font-size: 16px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.user-text { padding-bottom: 10px; }
-.user-text h1 { font-size: 2.2rem; color: var(--text-main); font-weight: 800; line-height: 1.2; }
-.user-text p { color: var(--text-muted); font-size: 1.1rem; font-weight: 600; margin-top: 5px; }
-
-.profile-stats {
-    display: flex;
-    gap: 15px;
-    padding-bottom: 10px;
-}
-
-.stat-item {
-    background: white;
-    padding: 15px 25px;
-    border-radius: 16px;
-    text-align: center;
-    min-width: 120px;
-    box-shadow: 0 4px 15px rgba(42, 93, 106, 0.05);
-    border: 1px solid rgba(42, 93, 106, 0.1);
-}
-.stat-num { font-weight: 800; color: var(--primary-teal); font-size: 1.6rem; display: block;}
-.stat-label { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
-
-/* ================= 2 CỘT THÂN TRANG ================= */
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
 .profile-body {
     display: grid;
     grid-template-columns: 320px 1fr;

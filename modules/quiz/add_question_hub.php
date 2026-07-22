@@ -9,11 +9,7 @@ if (!isset($_SESSION['username'])) {
 
 $username = $_SESSION['username'];
 
-<<<<<<< HEAD
 // Kiểm tra session full_name
-=======
-// Kiểm tra session full_name (Nếu chưa có thì truy vấn DB)
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
 if (isset($_SESSION['full_name'])) {
     $ho_va_ten = $_SESSION['full_name'];
 } else {
@@ -27,7 +23,6 @@ if (isset($_SESSION['full_name'])) {
 $mang_ten = explode(' ', trim($ho_va_ten));
 $ten_goi = end($mang_ten); 
 
-<<<<<<< HEAD
 // Xử lý xóa đề thi
 if (isset($_GET['delete_quiz']) && is_numeric($_GET['delete_quiz'])) {
     $delete_id = (int)$_GET['delete_quiz'];
@@ -52,23 +47,17 @@ if (isset($_GET['delete_quiz']) && is_numeric($_GET['delete_quiz'])) {
 }
 
 // Thống kê
-=======
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
 $stmt_stats = $conn->prepare("
     SELECT 
         COUNT(id) as total_quizzes,
         SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) as draft_count,
-<<<<<<< HEAD
         SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_count,
-=======
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
         SUM(num_questions) as total_questions
     FROM quizzes WHERE creator_username = ?
 ");
 $stmt_stats->bind_param("s", $username);
 $stmt_stats->execute();
 $stats = $stmt_stats->get_result()->fetch_assoc();
-<<<<<<< HEAD
 
 $total_quizzes = $stats['total_quizzes'] ?? 0;
 $draft_count = $stats['draft_count'] ?? 0;
@@ -84,21 +73,6 @@ $stmt_recent = $conn->prepare("
     (SELECT id, title, status, created_at, num_questions FROM quizzes 
      WHERE creator_username = ? AND status = 'completed' 
      ORDER BY created_at DESC LIMIT 3)
-=======
-$draft_count = $stats['draft_count'] ?? 0;
-$total_quizzes = $stats['total_quizzes'] ?? 0;
-$total_questions = $stats['total_questions'] ?? 0;
-
-// TỐI ƯU LOGIC: Ưu tiên kéo 1 bản nháp (nếu có) và 2 bản đã hoàn thành
-$stmt_recent = $conn->prepare("
-    (SELECT id, title, status, created_at FROM quizzes 
-     WHERE creator_username = ? AND status = 'draft' 
-     ORDER BY created_at DESC LIMIT 1)
-    UNION ALL
-    (SELECT id, title, status, created_at FROM quizzes 
-     WHERE creator_username = ? AND status = 'completed' 
-     ORDER BY created_at DESC LIMIT 2)
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
 ");
 $stmt_recent->bind_param("ss", $username, $username);
 $stmt_recent->execute();
@@ -114,20 +88,14 @@ require_once '../../includes/layouts/header.php';
     <div class="content-wrap">
         <div class="hub-container">
             
-<<<<<<< HEAD
             <!-- BREADCRUMB -->
-=======
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
             <nav class="breadcrumb">
                 <a href="../../home.php"><i class="fas fa-home"></i> Bảng điều khiển</a> 
                 <span style="margin: 0 10px;">/</span> 
                 <strong>Không gian làm việc</strong>
             </nav>
 
-<<<<<<< HEAD
             <!-- BANNER -->
-=======
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
             <div class="hub-banner">
                 <div class="hub-banner-content">
                     <h1>Chào <?php echo htmlspecialchars($ten_goi); ?>, sẵn sàng sáng tạo chưa?</h1>
@@ -136,16 +104,11 @@ require_once '../../includes/layouts/header.php';
                     <div class="creator-mini-stats">
                         <span>Đã tạo: <strong><?php echo $total_quizzes; ?></strong> Đề thi</span>
                         <span>Ngân hàng: <strong><?php echo (int)$total_questions; ?></strong> Câu hỏi</span>
-<<<<<<< HEAD
                         <?php if($completed_count > 0): ?>
                             <span style="color: #48bb78;">✅ <strong><?php echo $completed_count; ?></strong> Đã xuất bản</span>
                         <?php endif; ?>
                         <?php if($draft_count > 0): ?>
                             <span style="color: #f6ad55;">📝 <strong><?php echo $draft_count; ?></strong> Bản nháp</span>
-=======
-                        <?php if($draft_count > 0): ?>
-                            <span style="color: #fca5a5;">(<?php echo $draft_count; ?> Bản nháp)</span>
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                         <?php endif; ?>
                     </div>
                 </div>
@@ -156,11 +119,7 @@ require_once '../../includes/layouts/header.php';
                 <a href="create_quiz/step1_create_quiz.php" class="workspace-card card-primary">
                     <div class="ws-icon icon-blue"><i class="fas fa-magic"></i></div>
                     <h3 class="ws-title">Tạo Đề Thi Mới</h3>
-<<<<<<< HEAD
                     <p class="ws-desc">Khởi tạo bộ đề bằng thủ công hoặc tải lên file PDF để nhúng trực tiếp.</p>
-=======
-                    <p class="ws-desc">Khởi tạo bộ đề bằng thủ công hoặc tự động bóc tách từ file PDF/Word.</p>
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                     <div style="margin-top: 20px; font-weight: 700; color: var(--primary-teal);">Bắt đầu ngay <i class="fas fa-arrow-right"></i></div>
                 </a>
                 
@@ -179,16 +138,12 @@ require_once '../../includes/layouts/header.php';
             
             <div class="secondary-grid">
                 
-<<<<<<< HEAD
                 <!-- RECENT QUIZZES -->
-=======
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                 <div class="section-box">
                     <h3 class="section-title"><i class="fas fa-history" style="color: var(--primary-teal);"></i> Đề thi vừa thao tác</h3>
                     <div class="recent-list">
                         <?php if ($recent_quizzes && $recent_quizzes->num_rows > 0): ?>
                             <?php while($rq = $recent_quizzes->fetch_assoc()): 
-<<<<<<< HEAD
                                 $is_draft = ($rq['status'] == 'draft');
                                 $edit_link = $is_draft 
                                     ? "create_quiz/step2_add_questions.php?quiz_id=".$rq['id'] 
@@ -235,44 +190,17 @@ require_once '../../includes/layouts/header.php';
                                 <i class="fas fa-box-open" style="display: block; font-size: 2rem; margin-bottom: 10px; color: #cbd5e0;"></i>
                                 Chưa có dữ liệu. Hãy tạo đề thi đầu tiên của bạn!
                             </p>
-=======
-                                $edit_link = ($rq['status'] == 'draft') ? "create_quiz/step2_add_questions.php?quiz_id=".$rq['id'] : "edit_quiz.php?id=".$rq['id'];
-                                $badge_color = ($rq['status'] == 'draft') ? '#f6ad55' : '#38a169';
-                                $badge_text = ($rq['status'] == 'draft') ? 'Đang nháp' : 'Hoàn thành';
-                            ?>
-                                <a href="<?php echo $edit_link; ?>" class="recent-item">
-                                    <div>
-                                        <h4><?php echo htmlspecialchars($rq['title']); ?></h4>
-                                        <div class="recent-meta">
-                                            <span><i class="far fa-clock"></i> <?php echo date('d/m/Y', strtotime($rq['created_at'])); ?></span>
-                                        </div>
-                                    </div>
-                                    <span style="font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; background: rgba(0,0,0,0.05); color: <?php echo $badge_color; ?>; border: 1px solid <?php echo $badge_color; ?>;">
-                                        <?php echo $badge_text; ?>
-                                    </span>
-                                </a>
-                            <?php endwhile; ?>
-                        <?php else: ?>
-                            <p style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 20px 0;">Chưa có dữ liệu. Hãy tạo đề thi đầu tiên của bạn!</p>
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                         <?php endif; ?>
                     </div>
                 </div>
 
-<<<<<<< HEAD
                 <!-- TEMPLATES -->
-=======
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                 <div class="section-box">
                     <h3 class="section-title"><i class="fas fa-bolt" style="color: #d97706;"></i> Mẫu tạo nhanh</h3>
                     <div class="template-grid">
                         <a href="create_quiz/step1_create_quiz.php?template=ai_pdf" class="template-btn tpl-ai">
                             <i class="fas fa-file-pdf"></i>
-<<<<<<< HEAD
                             Nhúng đề từ File PDF
-=======
-                            Tách đề từ File PDF
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                         </a>
                         <a href="create_quiz/step1_create_quiz.php?template=mini_test" class="template-btn tpl-15m">
                             <i class="fas fa-stopwatch"></i>
@@ -282,13 +210,10 @@ require_once '../../includes/layouts/header.php';
                             <i class="fas fa-pen-nib"></i>
                             Bài tập Tự luận
                         </a>
-<<<<<<< HEAD
                         <a href="create_quiz/step1_create_quiz.php?template=midterm" class="template-btn" style="border-color: rgba(15, 92, 107, 0.1);">
                             <i class="fas fa-graduation-cap" style="color: var(--primary-teal);"></i>
                             Đề thi giữa kỳ
                         </a>
-=======
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                     </div>
                 </div>
 

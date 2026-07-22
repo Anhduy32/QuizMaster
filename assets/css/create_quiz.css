@@ -1,14 +1,7 @@
-<<<<<<< HEAD
        /* ============================================================
            RESET & ROOT VARIABLES
            ============================================================ */
            * {
-=======
-      /* ============================================================
-           RESET & ROOT VARIABLES
-           ============================================================ */
-        * {
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -136,11 +129,7 @@
             padding: 14px 20px;
             border-radius: var(--radius-sm);
             margin-bottom: 24px;
-<<<<<<< HEAD
             display: none;
-=======
-            display: flex;
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
             align-items: center;
             gap: 12px;
             font-weight: 600;
@@ -148,13 +137,10 @@
             border-left: 4px solid #dc2626;
         }
 
-<<<<<<< HEAD
         .error-message.show {
             display: flex;
         }
 
-=======
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
         .error-message i {
             font-size: 1.2rem;
         }
@@ -194,11 +180,7 @@
             border-radius: 2px;
             z-index: 1;
             transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-<<<<<<< HEAD
             width: 33%;
-=======
-            width: 0%;
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
         }
 
         .step-indicator {
@@ -344,15 +326,12 @@
             cursor: pointer;
         }
 
-<<<<<<< HEAD
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
 
-=======
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
         /* ============================================================
            RADIO CARDS
            ============================================================ */
@@ -449,10 +428,7 @@
             transition: var(--transition-smooth);
             backdrop-filter: blur(4px);
             margin-top: 8px;
-<<<<<<< HEAD
             cursor: pointer;
-=======
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
         }
 
         .upload-area:hover {
@@ -496,7 +472,6 @@
             border-color: var(--primary-teal);
         }
 
-<<<<<<< HEAD
         .upload-area .file-name {
             font-weight: 600;
             color: var(--primary-teal);
@@ -560,8 +535,6 @@
             100% { transform: rotate(360deg); } 
         }
 
-=======
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
         /* ============================================================
            BANK SECTION
            ============================================================ */
@@ -695,10 +668,7 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
-<<<<<<< HEAD
             text-decoration: none;
-=======
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
         }
 
         .btn:active {
@@ -789,14 +759,11 @@
                 grid-template-columns: 1fr 1fr;
             }
 
-<<<<<<< HEAD
             .form-row {
                 grid-template-columns: 1fr;
                 gap: 0;
             }
 
-=======
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
             .bank-grid {
                 grid-template-columns: 1fr;
             }
@@ -840,8 +807,4 @@
                 padding: 12px 14px;
                 font-size: 0.9rem;
             }
-<<<<<<< HEAD
         }
-=======
-        }
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
