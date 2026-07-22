@@ -1,0 +1,98 @@
+/* ==========================================================================
+   1. MAIN FOOTER STYLE (Giao diện chung)
+   ========================================================================== */
+   .footer {
+    width: 100%;
+    margin-top: 40px;
+    padding: 30px 0;
+    background-color: #2a5d6a;
+    color: #ffffff;
+    font-size: 0.9rem;
+    border-radius: 16px 16px 0 0;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap; /* Ép phần tử con dài (như thẻ p) rớt xuống dòng */
+    gap: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.footer-brand p {
+    width: 100%; /* Chiếm 100% để luôn nằm ở dòng dưới icon và tiêu đề */
+    margin-top: 5px;
+    font-size: 0.85rem;
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+.footer-links {
+    text-align: right;
+}
+
+
+   .main-wrapper .footer {
+    width: calc(100% + 40px);
+    margin: auto -20px 0 -20px; 
+    padding: 20px 30px;
+}
+
+.main-wrapper .footer-container {
+    display: flex;
+    flex-direction: row; 
+    justify-content: space-between; 
+    align-items: center;
+    gap: 20px;
+}
+
+/* Xử lý phần Logo bên trái */
+.main-wrapper .footer-brand {
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+    flex-wrap: wrap; /
+    gap: 10px;
+    text-align: left;
+}
+
+.main-wrapper .footer-brand p {
+    width: 100%;
+    margin: 5px 0 0 0;
+    text-align: left;
+}
+
+/* Xử lý phần Bản quyền bên phải */
+.main-wrapper .footer-links {
+    text-align: right;
+    white-space: nowrap; 
+}
+
+/* ============================================================
+   CHỈ GOM VÀO GIỮA KHI XEM TRÊN ĐIỆN THOẠI
+   ============================================================ */
+@media (max-width: 768px) {
+    .main-wrapper .footer-container {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+    }
+    .main-wrapper .footer-brand {
+        justify-content: center;
+        text-align: center;
+    }
+    .main-wrapper .footer-brand p,
+    .main-wrapper .footer-links {
+        text-align: center;
+    }
+}

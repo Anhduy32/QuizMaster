@@ -294,6 +294,7 @@ require_once 'includes/layouts/header.php';
         </div>
     </div>
 
-    <!-- ===== FOOTER ===== -->
-    <?php require_once 'includes/layouts/footer.php'; ?>
+<!-- ================= FOOTER ================= -->
+<?php require_once 'includes/layouts/footer.php'; ?>
+
 </main>

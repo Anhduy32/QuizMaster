@@ -4,6 +4,9 @@
  * Sử dụng: require_once 'includes/layouts/footer.php';
  */
 ?>
+    <!-- ================= GỌI CSS CHO FOOTER ================= -->
+    <link rel="stylesheet" href="/WebTaoBoDeTuDong/assets/css/footer.css">
+
     <!-- ================= FOOTER ================= -->
     <footer class="footer">
         <div class="footer-container">
