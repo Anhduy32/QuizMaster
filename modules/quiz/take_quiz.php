@@ -9,7 +9,10 @@ if (!isset($_SESSION['username'])) {
 
 $quiz_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
+<<<<<<< HEAD
 // Truy vấn thông tin đề thi bao gồm cả quiz_type và file_path
+=======
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
 $query_quiz = "SELECT * FROM quizzes WHERE id = ?";
 $stmt_quiz = $conn->prepare($query_quiz);
 $stmt_quiz->bind_param("i", $quiz_id);
@@ -20,6 +23,7 @@ if (!$quiz) {
     die("<div style='text-align:center; padding:50px; font-family:sans-serif;'>Đề thi không tồn tại! <a href='../../home.php'>Về trang chủ</a></div>");
 }
 
+<<<<<<< HEAD
 $quiz_type = $quiz['quiz_type'] ?? 'multiple_choice';
 $file_path = $quiz['file_path'] ?? '';
 
@@ -124,6 +128,8 @@ endif;
 // LOẠI 2: ĐỀ THI TRẮC NGHIỆM (multiple_choice)
 // ============================================================
 // Truy vấn danh sách câu hỏi
+=======
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
 $query_questions = "SELECT * FROM questions WHERE quiz_id = ? ORDER BY id ASC";
 $stmt_q = $conn->prepare($query_questions);
 $stmt_q->bind_param("i", $quiz_id);
@@ -131,12 +137,15 @@ $stmt_q->execute();
 $questions = $stmt_q->get_result();
 $total_questions = $questions->num_rows;
 
+<<<<<<< HEAD
 // Nếu không có câu hỏi nào, chuyển hướng về trang chi tiết
 if ($total_questions == 0) {
     header("Location: quiz_detail.php?id=" . $quiz_id . "&error=no_questions");
     exit();
 }
 
+=======
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
 // CẤU HÌNH SỐ CÂU HỎI TRÊN MỖI TRANG
 $questions_per_page = 5;
 ?>
@@ -160,6 +169,7 @@ $questions_per_page = 5;
         };
     </script>
     <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<<<<<<< HEAD
     
     <style>
         /* CSS cho phần điều hướng */
@@ -172,6 +182,18 @@ $questions_per_page = 5;
         .btn-nav {
             padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 1rem;
             border: none; cursor: pointer; transition: all 0.3s ease;
+=======
+
+    <!-- CSS Bổ sung cho Thanh điều hướng phân trang -->
+    <style>
+        .quiz-nav-buttons {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 10px; padding-top: 25px; border-top: 2px dashed var(--border-light);
+        }
+        .btn-nav {
+            padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 1rem;
+            border: none; cursor: pointer; transition: var(--transition);
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
             display: flex; align-items: center; gap: 8px;
         }
         .btn-nav-prev { background: #e2e8f0; color: #475569; }
@@ -180,7 +202,13 @@ $questions_per_page = 5;
         .btn-nav-next:hover { background: var(--primary-hover); transform: translateX(3px); box-shadow: 0 4px 12px rgba(15,92,107,0.2); }
         .btn-nav-submit { background: #10b981; color: white; }
         .btn-nav-submit:hover { background: #059669; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(16,185,129,0.25); }
+<<<<<<< HEAD
         .page-indicator { font-weight: 700; color: #64748b; background: white; padding: 10px 20px; border-radius: 50px; border: 1px solid #e2e8f0; }
+=======
+        .page-indicator { font-weight: 700; color: var(--text-muted); background: white; padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-light); }
+        
+        /* Chỉnh lại con trỏ cho Sidebar Badges */
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
         .q-badge { cursor: pointer; user-select: none; }
     </style>
 </head>
@@ -205,8 +233,15 @@ $questions_per_page = 5;
                 $q_num = 1;
                 while ($q = $questions->fetch_assoc()): 
                     $is_essay = empty($q['opt_b']);
+<<<<<<< HEAD
                     $page_num = ceil($q_num / $questions_per_page);
                 ?>
+=======
+                    // Xác định trang hiện tại của câu hỏi này
+                    $page_num = ceil($q_num / $questions_per_page);
+                ?>
+                    <!-- Thêm data-page để JS nhận diện trang -->
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                     <div class="question-card" id="question-<?php echo $q_num; ?>" data-page="<?php echo $page_num; ?>" style="display: none;">
                         <div class="q-number">Câu <?php echo $q_num; ?></div>
                         
@@ -215,11 +250,19 @@ $questions_per_page = 5;
                         </div>
                         
                         <?php if ($is_essay): ?>
+<<<<<<< HEAD
+=======
+                            <!-- Bỏ required để JS tự kiểm tra -->
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                             <textarea name="answers[<?php echo $q['id']; ?>]" class="essay-input" placeholder="Nhập câu trả lời của bạn vào đây..." oninput="markDone(<?php echo $q_num; ?>)"></textarea>
                         <?php else: ?>
                             <div class="options-grid">
                                 <?php foreach (['A' => 'opt_a', 'B' => 'opt_b', 'C' => 'opt_c', 'D' => 'opt_d'] as $key => $col): ?>
                                     <label class="option-label">
+<<<<<<< HEAD
+=======
+                                        <!-- Bỏ required để JS tự kiểm tra, không bị lỗi form ẩn -->
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                                         <input type="radio" name="answers[<?php echo $q['id']; ?>]" value="<?php echo $key; ?>" onchange="markDone(<?php echo $q_num; ?>)">
                                         <span class="custom-radio"></span>
                                         <span class="opt-text"><strong><?php echo $key; ?>.</strong> &nbsp; <span style="white-space: pre-wrap; word-wrap: break-word;"><?php echo htmlspecialchars($q[$col]); ?></span></span>
@@ -256,12 +299,19 @@ $questions_per_page = 5;
                 
                 <div class="progress-grid">
                     <?php for($i = 1; $i <= $total_questions; $i++): ?>
+<<<<<<< HEAD
+=======
+                        <!-- Đổi thẻ <a> thành thẻ <div> có sự kiện onclick để chuyển trang -->
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                         <div class="q-badge" id="badge-<?php echo $i; ?>" onclick="goToQuestion(<?php echo $i; ?>)"><?php echo $i; ?></div>
                     <?php endfor; ?>
                 </div>
                 
                 <hr style="border: 1px solid #e2e8f0; margin: 25px 0;">
+<<<<<<< HEAD
                 
+=======
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                 <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px; line-height: 1.5;">
                     <i class="fas fa-info-circle"></i> Bấm vào ô số để quay lại kiểm tra câu hỏi tương ứng.
                 </p>
@@ -278,25 +328,50 @@ $questions_per_page = 5;
         const totalPages = Math.ceil(totalQuestions / questionsPerPage);
         let currentPage = 1;
 
+<<<<<<< HEAD
+=======
+        // KHỞI TẠO: Hiển thị trang đầu tiên khi tải trang
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
         document.addEventListener("DOMContentLoaded", () => {
             showPage(1);
         });
 
+<<<<<<< HEAD
+=======
+        // Hàm Đổi Màu Huy Hiệu khi chọn đáp án
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
         function markDone(qNum) {
             document.getElementById('badge-' + qNum).classList.add('done');
         }
 
+<<<<<<< HEAD
         function showPage(page) {
+=======
+        // Hàm Hiển thị trang (Render Page)
+        function showPage(page) {
+            // 1. Ẩn tất cả câu hỏi
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
             document.querySelectorAll('.question-card').forEach(card => {
                 card.style.display = 'none';
             });
             
+<<<<<<< HEAD
+=======
+            // 2. Hiện câu hỏi thuộc trang hiện tại
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
             document.querySelectorAll(`.question-card[data-page="${page}"]`).forEach(card => {
                 card.style.display = 'block';
             });
 
+<<<<<<< HEAD
             document.getElementById('page-info').innerText = `Trang ${page} / ${totalPages}`;
 
+=======
+            // 3. Cập nhật Text
+            document.getElementById('page-info').innerText = `Trang ${page} / ${totalPages}`;
+
+            // 4. Xử lý logic Ẩn/Hiện nút bấm
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
             document.getElementById('btn-prev').style.visibility = (page === 1) ? 'hidden' : 'visible';
             
             if (page === totalPages) {
@@ -307,11 +382,19 @@ $questions_per_page = 5;
                 document.getElementById('btn-submit-main').style.display = 'none';
             }
 
+<<<<<<< HEAD
             // Scroll về đầu form
             const formTop = document.getElementById('quizForm').getBoundingClientRect().top + window.scrollY - 80;
             window.scrollTo({ top: formTop, behavior: 'smooth' });
         }
 
+=======
+            // 5. Tự động cuộn lên đầu bài làm cho học viên đỡ mỏi tay
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Hàm Chuyển trang (Bấm nút Tới/Lui)
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
         function changePage(step) {
             let newPage = currentPage + step;
             if (newPage >= 1 && newPage <= totalPages) {
@@ -320,17 +403,32 @@ $questions_per_page = 5;
             }
         }
 
+<<<<<<< HEAD
         function goToQuestion(qNum) {
             let targetPage = Math.ceil(qNum / questionsPerPage);
             
+=======
+        // Hàm Nhảy nhanh đến câu hỏi (Khi bấm vào Sidebar Badges)
+        function goToQuestion(qNum) {
+            let targetPage = Math.ceil(qNum / questionsPerPage);
+            
+            // Nếu câu hỏi nằm ở trang khác, phải chuyển trang trước
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
             if (currentPage !== targetPage) {
                 currentPage = targetPage;
                 showPage(currentPage);
             }
             
+<<<<<<< HEAD
             setTimeout(() => {
                 const targetEl = document.getElementById('question-' + qNum);
                 const offset = 90; 
+=======
+            // Đợi CSS render xong rồi mới scroll tới đúng thẻ đó
+            setTimeout(() => {
+                const targetEl = document.getElementById('question-' + qNum);
+                const offset = 90; // Trừ hao thanh header cố định
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                 const bodyRect = document.body.getBoundingClientRect().top;
                 const elementRect = targetEl.getBoundingClientRect().top;
                 const elementPosition = elementRect - bodyRect;
@@ -338,17 +436,31 @@ $questions_per_page = 5;
 
                 window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
                 
+<<<<<<< HEAD
+=======
+                // Nháy nhẹ viền để thu hút sự chú ý
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                 targetEl.style.boxShadow = "0 0 0 4px rgba(44, 156, 140, 0.3)";
                 setTimeout(() => targetEl.style.boxShadow = "var(--glass-shadow)", 1500);
             }, 100);
         }
 
+<<<<<<< HEAD
+=======
+        // Hàm Kiểm tra Validate chống bỏ sót câu hỏi trước khi Nộp Bài
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
         function validateForm(e) {
             for (let i = 1; i <= totalQuestions; i++) {
                 let badge = document.getElementById('badge-' + i);
                 
+<<<<<<< HEAD
                 if (!badge.classList.contains('done')) {
                     e.preventDefault(); 
+=======
+                // Nếu tìm thấy 1 câu chưa làm (không có class 'done')
+                if (!badge.classList.contains('done')) {
+                    e.preventDefault(); // Chặn hành động nộp bài
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                     alert(`Bạn chưa trả lời Câu số ${i}. Hệ thống sẽ chuyển đến câu hỏi này!`);
                     goToQuestion(i);
                     return false;

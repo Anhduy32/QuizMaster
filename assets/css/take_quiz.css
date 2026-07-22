@@ -126,6 +126,7 @@ body { background: var(--bg-main); color: var(--text-main); padding-top: 80px; s
 @media (max-width: 768px) {
     .exam-header { padding: 15px 20px; }
     .exam-title span { display: none; /* Ẩn bớt chữ trên mobile */ }
+<<<<<<< HEAD
 }
 
         .quiz-nav-buttons {
@@ -260,3 +261,6 @@ body { background: var(--bg-main); color: var(--text-main); padding-top: 80px; s
                 flex-wrap: wrap;
             }
         }
+=======
+}
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8

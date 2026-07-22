@@ -20,8 +20,12 @@ $audience_filter = isset($_GET['audience']) ? trim($_GET['audience']) : '';
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'newest';
 
 // ================= XÂY DỰNG CÂU LỆNH SQL ĐỘNG =================
+<<<<<<< HEAD
 // Cập nhật: Cho phép hiển thị nếu có câu hỏi HOẶC có file đính kèm (PDF)
 $where_clauses = ["q.status = 'completed'", "(q.num_questions > 0 OR q.file_path IS NOT NULL)"];
+=======
+$where_clauses = ["q.status = 'completed'", "q.num_questions > 0"];
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
 $params = [];
 $types = "";
 
@@ -191,6 +195,7 @@ require_once '../../includes/layouts/header.php';
                                     <?php echo htmlspecialchars($q['subject']); ?>
                                 </span>
                                 
+<<<<<<< HEAD
                                 <h3 class="quiz-item-title">
                                     <?php echo htmlspecialchars($q['title']); ?>
                                     <!-- Hiển thị nhãn PDF nếu đề thi có file đính kèm -->
@@ -200,10 +205,14 @@ require_once '../../includes/layouts/header.php';
                                         </span>
                                     <?php endif; ?>
                                 </h3>
+=======
+                                <h3 class="quiz-item-title"><?php echo htmlspecialchars($q['title']); ?></h3>
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                                 
                                 <div class="quiz-item-meta">
                                     <i class="fas fa-user-edit"></i> Tác giả: <strong><?php echo htmlspecialchars($q['creator_name']); ?></strong>
                                 </div>
+<<<<<<< HEAD
                                 <div class="quiz-item-meta" style="display: flex; gap: 12px; align-items: center;">
                                     <span><i class="fas fa-layer-group"></i> Số lượng: <strong><?php echo (int)$q['num_questions']; ?> câu</strong></span>
                                     
@@ -215,6 +224,10 @@ require_once '../../includes/layouts/header.php';
                                             Đáp án: <strong><?php echo $q['has_answers'] ? 'Có' : 'Không'; ?></strong>
                                         </span>
                                     <?php endif; ?>
+=======
+                                <div class="quiz-item-meta">
+                                    <i class="fas fa-layer-group"></i> Độ dài: <strong><?php echo (int)$q['num_questions']; ?> câu hỏi</strong>
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                                 </div>
                                 <div class="quiz-item-meta">
                                     <i class="fas fa-fire" style="color: #dd6b20;"></i> Lượt thi: <strong><?php echo (int)$q['views']; ?></strong>
@@ -231,6 +244,10 @@ require_once '../../includes/layouts/header.php';
                                         <span><i class="far fa-calendar-alt" style="margin-right: 4px;"></i> <?php echo date('d/m/Y', strtotime($q['created_at'])); ?></span>
                                     </div>
                                 </div>
+<<<<<<< HEAD
+=======
+                                <!-- Đã cập nhật link sang quiz_detail.php -->
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                                 <a href="quiz_detail.php?id=<?php echo (int)$q['id']; ?>" class="btn-start-quiz">
                                     Thử sức <i class="fas fa-arrow-right"></i>
                                 </a>

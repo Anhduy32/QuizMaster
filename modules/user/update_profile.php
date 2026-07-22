@@ -22,11 +22,17 @@ $gioi_tinh = $nguoi_dung['gender'] ?? '';
 $dia_chi   = $nguoi_dung['address'] ?? '';
 $email     = $nguoi_dung['email'] ?? 'Chưa cập nhật Email';
 $chuc_vu   = $nguoi_dung['role'] ?? 'user';
+<<<<<<< HEAD
 $mon_yeu_thich_str = $nguoi_dung['favorite_subjects'] ?? '';
 
 $avatar_url = !empty($nguoi_dung['picture']) 
     ? $nguoi_dung['picture'] 
     : "https://ui-avatars.com/api/?name=" . urlencode($ho_va_ten) . "&background=0f5c6b&color=fff&size=150";
+=======
+$mon_yeu_thich_str = $nguoi_dung['favorite_subjects'] ?? ''; // Chuỗi môn học
+
+$avatar_url = !empty($nguoi_dung['picture']) ? $nguoi_dung['picture'] : "https://ui-avatars.com/api/?name=" . urlencode($ho_va_ten) . "&background=2a5d6a&color=fff&size=150";
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
 
 // 2. LẤY KHO ĐỀ THI ĐÃ TẠO
 $truy_van_de_thi = "SELECT * FROM quizzes WHERE creator_username = ? ORDER BY created_at DESC";
@@ -42,8 +48,12 @@ $truy_van_lich_su = "
     FROM quiz_history h 
     JOIN quizzes q ON h.quiz_id = q.id 
     WHERE h.username = ? 
+<<<<<<< HEAD
     ORDER BY h.completed_at DESC
     LIMIT 10";
+=======
+    ORDER BY h.completed_at DESC";
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
 $stmt_lich_su = $conn->prepare($truy_van_lich_su);
 $stmt_lich_su->bind_param('s', $ten_dang_nhap);
 $stmt_lich_su->execute();
@@ -52,9 +62,15 @@ $tong_luot_thi = $ket_qua_lich_su->num_rows;
 
 // Tính điểm trung bình
 $diem_tb = 0;
+<<<<<<< HEAD
 $temp_lich_su = [];
 if ($tong_luot_thi > 0) {
     $tong_diem = 0;
+=======
+if ($tong_luot_thi > 0) {
+    $tong_diem = 0;
+    $temp_lich_su = []; // Lưu tạm để vòng lặp HTML bên dưới dùng lại
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
     while ($row = $ket_qua_lich_su->fetch_assoc()) {
         $tong_diem += $row['score'];
         $temp_lich_su[] = $row;
@@ -63,19 +79,27 @@ if ($tong_luot_thi > 0) {
 }
 
 // 4. XỬ LÝ FORM CẬP NHẬT
+<<<<<<< HEAD
 $thong_bao = '';
+=======
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['cap_nhat'])) {
     $ho_va_ten_moi = trim($_POST['full_name']);
     $ngay_sinh_moi = trim($_POST['birthdate']);
     $gioi_tinh_moi = trim($_POST['gender']);
     $dia_chi_moi   = trim($_POST['address']);
+<<<<<<< HEAD
     $mon_yeu_thich_moi = trim($_POST['favorite_subjects']);
+=======
+    $mon_yeu_thich_moi = trim($_POST['favorite_subjects']); // Lấy môn học mới
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
 
     $truy_van_cap_nhat = "UPDATE users SET full_name=?, birthdate=?, gender=?, address=?, favorite_subjects=? WHERE username=?";
     $chuan_bi_cap_nhat = $conn->prepare($truy_van_cap_nhat);
     $chuan_bi_cap_nhat->bind_param('ssssss', $ho_va_ten_moi, $ngay_sinh_moi, $gioi_tinh_moi, $dia_chi_moi, $mon_yeu_thich_moi, $ten_dang_nhap);
 
     if ($chuan_bi_cap_nhat->execute()) {
+<<<<<<< HEAD
         $thong_bao = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Cập nhật hồ sơ thành công!</div>';
         // Cập nhật session
         $_SESSION['full_name'] = $ho_va_ten_moi;
@@ -108,6 +132,37 @@ require_once '../../includes/layouts/header.php';
     <div class="profile-wrapper">
         
         <!-- ===== PROFILE HEADER ===== -->
+=======
+        echo "<script>alert('Cập nhật hồ sơ thành công!'); window.location.href=window.location.pathname;</script>";
+        exit();
+    } else {
+        echo "<script>alert('Lỗi: " . addslashes($conn->error) . "');</script>";
+    }
+}
+
+// Hàm hỗ trợ render giao diện động (Màu sắc icon theo tên môn)
+function getSubjectStyle($subject) {
+    $sub = mb_strtolower($subject, 'UTF-8');
+    if (strpos($sub, 'toán') !== false) return ['bg' => 'bg-math', 'badge' => 'badge-blue', 'icon' => 'fa-square-root-alt'];
+    if (strpos($sub, 'lý') !== false || strpos($sub, 'địa') !== false) return ['bg' => 'bg-history', 'badge' => 'badge-orange', 'icon' => 'fa-landmark'];
+    return ['bg' => 'bg-science', 'badge' => 'badge-green', 'icon' => 'fa-flask'];
+}
+?>
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ sơ cá nhân - QuizMaster</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/profile.css?v=<?php echo time(); ?>">
+</head>
+<body>
+
+    <div class="container">
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
         <div class="glass-panel">
             <div class="profile-cover"></div>
             <div class="profile-main-info">
@@ -118,8 +173,12 @@ require_once '../../includes/layouts/header.php';
                     </div>
                     <div class="user-text">
                         <h1><?php echo htmlspecialchars($ho_va_ten); ?></h1>
+<<<<<<< HEAD
                         <p>
                             <i class="fas fa-check-circle" style="color: var(--accent-teal);"></i> 
+=======
+                        <p><i class="fas fa-check-circle" style="color: var(--accent-teal);"></i> 
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                             <?php 
                                 if($chuc_vu == 'admin') echo 'Quản trị viên hệ thống';
                                 elseif($chuc_vu == 'giaovien') echo 'Giảng viên chuyên môn';
@@ -138,14 +197,18 @@ require_once '../../includes/layouts/header.php';
                         <span class="stat-num"><?php echo $diem_tb; ?></span>
                         <span class="stat-label">Điểm TB</span>
                     </div>
+<<<<<<< HEAD
                     <div class="stat-item">
                         <span class="stat-num"><?php echo $tong_de_da_tao; ?></span>
                         <span class="stat-label">Đề đã tạo</span>
                     </div>
+=======
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                 </div>
             </div>
         </div>
 
+<<<<<<< HEAD
         <!-- ===== PROFILE BODY ===== -->
         <div class="profile-body">
             
@@ -169,17 +232,47 @@ require_once '../../includes/layouts/header.php';
                     <?php else: ?>
                         <span style="font-size: 0.9rem; color: #718096;">Chưa có môn học yêu thích.</span>
                     <?php endif; ?>
+=======
+        <div class="profile-body">
+            
+            <div class="glass-panel sidebar-card">
+                <h3 class="sidebar-title">Liên hệ & Cá nhân</h3>
+                <ul class="info-list">
+                    <li><div class="info-icon"><i class="fas fa-envelope"></i></div> <?php echo htmlspecialchars($email); ?></li>
+                    <li><div class="info-icon"><i class="fas fa-birthday-cake"></i></div> <?php echo !empty($ngay_sinh) ? date('d/m/Y', strtotime($ngay_sinh)) : 'Chưa cập nhật'; ?></li>
+                    <li><div class="info-icon"><i class="fas fa-venus-mars"></i></div> <?php echo !empty($gioi_tinh) ? htmlspecialchars($gioi_tinh) : 'Chưa thiết lập'; ?></li>
+                    <li><div class="info-icon"><i class="fas fa-map-marked-alt"></i></div> <?php echo !empty($dia_chi) ? htmlspecialchars($dia_chi) : 'Chưa cập nhật địa chỉ'; ?></li>
+                </ul>
+
+                <h3 class="sidebar-title" style="margin-top: 40px;">Môn học yêu thích</h3>
+                <div class="skill-tags">
+                    <?php 
+                        if (!empty($mon_yeu_thich_str)) {
+                            $mon_hocs = explode(',', $mon_yeu_thich_str);
+                            foreach ($mon_hocs as $mon) {
+                                echo '<span class="tag">'. htmlspecialchars(trim($mon)) .'</span>';
+                            }
+                        } else {
+                            echo '<span style="font-size: 0.9rem; color: #718096;">Chưa có môn học yêu thích.</span>';
+                        }
+                    ?>
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                 </div>
 
                 <button class="btn-edit-profile" onclick="openTab(event, 'update')">
                     <i class="fas fa-sliders-h"></i> Cài đặt tài khoản
                 </button>
 
+<<<<<<< HEAD
                 <a href="../../home.php" class="btn-edit-profile btn-edit-profile-outline" style="margin-top: 10px;">
+=======
+                <a href="../../index.php" class="btn-edit-profile" style="background: transparent; color: var(--primary-teal); border: 2px solid var(--primary-teal); margin-top: 15px;">
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                     <i class="fas fa-home"></i> Về trang chủ
                 </a>
 
                 <a href="../login/logout.php" class="btn-logout">
+<<<<<<< HEAD
                     <i class="fas fa-sign-out-alt"></i> Đăng xuất
                 </a>
             </div>
@@ -241,11 +334,55 @@ require_once '../../includes/layouts/header.php';
                             <a href="create_quiz/step1_create_quiz.php" class="btn-edit-profile" style="width: auto; padding: 12px 30px; margin-top: 16px;">
                                 <i class="fas fa-plus"></i> Tạo đề thi mới
                             </a>
+=======
+                    <i class="fas fa-sign-out-alt"></i> Thoát
+                </a>
+            </div>
+
+            <div class="glass-panel content-card">
+                <div class="tabs-header">
+                    <button class="tab-btn active" onclick="openTab(event, 'created')"><i class="fas fa-layer-group"></i> Kho đề thi (<?php echo $tong_de_da_tao; ?>)</button>
+                    <button class="tab-btn" onclick="openTab(event, 'history')"><i class="fas fa-chart-line"></i> Lịch sử học tập (<?php echo $tong_luot_thi; ?>)</button>
+                    <button class="tab-btn" id="tabUpdateBtn" onclick="openTab(event, 'update')" style="display: none;">Cập nhật</button>
+                </div>
+
+                <div id="created" class="tab-content active">
+                    <?php if ($tong_de_da_tao > 0): ?>
+                        <?php while ($quiz = $ket_qua_de_thi->fetch_assoc()): 
+                            $style = getSubjectStyle($quiz['subject']); 
+                        ?>
+                            <div class="quiz-item">
+                                <div class="quiz-info-group">
+                                    <div class="quiz-thumb <?php echo $style['bg']; ?>"><i class="fas <?php echo $style['icon']; ?>"></i></div>
+                                    <div>
+                                        <div class="quiz-tags">
+                                            <span class="q-badge <?php echo $style['badge']; ?>"><?php echo htmlspecialchars($quiz['subject']); ?></span>
+                                        </div>
+                                        <a href="#" class="quiz-title"><?php echo htmlspecialchars($quiz['title']); ?></a>
+                                        <div class="quiz-meta">
+                                            <span><i class="fas fa-question-circle"></i> <?php echo $quiz['num_questions']; ?> Câu</span>
+                                            <span><i class="fas fa-clock"></i> <?php echo $quiz['time_limit']; ?> Phút</span>
+                                            <span><i class="fas fa-users"></i> <?php echo $quiz['views']; ?> Lượt</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="#" class="btn-outline">Sửa đề</a>
+                            </div>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <div style="text-align: center; padding: 40px; color: #718096;">
+                            <i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                            <h3>Bạn chưa tạo đề thi nào.</h3>
+                            <p>Hãy đóng góp kiến thức cho cộng đồng ngay hôm nay!</p>
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                         </div>
                     <?php endif; ?>
                 </div>
 
+<<<<<<< HEAD
                 <!-- TAB: LỊCH SỬ -->
+=======
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                 <div id="history" class="tab-content">
                     <?php if ($tong_luot_thi > 0): ?>
                         <?php foreach ($temp_lich_su as $history): 
@@ -253,6 +390,7 @@ require_once '../../includes/layouts/header.php';
                         ?>
                             <div class="quiz-item">
                                 <div class="quiz-info-group">
+<<<<<<< HEAD
                                     <div class="quiz-thumb <?php echo $style['bg']; ?>">
                                         <i class="fas <?php echo $style['icon']; ?>"></i>
                                     </div>
@@ -282,10 +420,31 @@ require_once '../../includes/layouts/header.php';
                             <a href="../quiz/take_quiz.php" class="btn-edit-profile" style="width: auto; padding: 12px 30px; margin-top: 16px; background: #f59e0b;">
                                 <i class="fas fa-play"></i> Bắt đầu thi thử
                             </a>
+=======
+                                    <div class="quiz-thumb <?php echo $style['bg']; ?>"><i class="fas <?php echo $style['icon']; ?>"></i></div>
+                                    <div>
+                                        <div class="quiz-tags"><span class="q-badge badge-green">Hoàn thành</span></div>
+                                        <a href="#" class="quiz-title"><?php echo htmlspecialchars($history['title']); ?></a>
+                                        <div class="quiz-meta">
+                                            <span><i class="fas fa-calendar-check"></i> <?php echo date('d/m/Y H:i', strtotime($history['completed_at'])); ?></span>
+                                            <span style="color: #38a169; font-weight: 800;"><i class="fas fa-star"></i> Điểm: <?php echo $history['score'] . '/' . $history['total_score']; ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="#" class="btn-outline">Xem bài giải</a>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div style="text-align: center; padding: 40px; color: #718096;">
+                            <i class="fas fa-history" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                            <h3>Chưa có dữ liệu học tập.</h3>
+                            <p>Các bài kiểm tra bạn tham gia sẽ xuất hiện ở đây.</p>
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                         </div>
                     <?php endif; ?>
                 </div>
 
+<<<<<<< HEAD
                 <!-- TAB: CẬP NHẬT -->
                 <div id="update" class="tab-content">
                     <h2 style="color: var(--primary-teal); margin-bottom: 8px; font-weight: 800; font-size: 1.3rem;">
@@ -297,12 +456,21 @@ require_once '../../includes/layouts/header.php';
                     
                     <?php echo $thong_bao; ?>
 
+=======
+                <div id="update" class="tab-content">
+                    <h2 style="color: var(--primary-teal); margin-bottom: 25px; font-weight: 800;">Chỉnh sửa thông tin cá nhân</h2>
+                    
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                     <form method="POST" action="">
                         <input type="hidden" name="cap_nhat" value="1">
 
                         <div class="update-grid">
                             <div class="form-group full-width">
+<<<<<<< HEAD
                                 <label class="form-label" for="full_name">Họ và tên hiển thị <span style="color: #e53e3e;">*</span></label>
+=======
+                                <label class="form-label" for="full_name">Họ và tên hiển thị</label>
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                                 <input type="text" id="full_name" name="full_name" class="form-control" value="<?php echo htmlspecialchars($ho_va_ten); ?>" required>
                             </div>
 
@@ -314,7 +482,11 @@ require_once '../../includes/layouts/header.php';
                             <div class="form-group">
                                 <label class="form-label" for="gender">Giới tính</label>
                                 <select id="gender" name="gender" class="form-control">
+<<<<<<< HEAD
                                     <option value="" <?php echo empty($gioi_tinh) ? 'selected' : ''; ?>>Chọn giới tính</option>
+=======
+                                    <option value="" disabled <?php echo empty($gioi_tinh) ? 'selected' : ''; ?>>Chọn giới tính</option>
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                                     <option value="Nam" <?php echo $gioi_tinh === 'Nam' ? 'selected' : ''; ?>>Nam</option>
                                     <option value="Nữ" <?php echo $gioi_tinh === 'Nữ' ? 'selected' : ''; ?>>Nữ</option>
                                     <option value="Khác" <?php echo $gioi_tinh === 'Khác' ? 'selected' : ''; ?>>Khác</option>
@@ -326,13 +498,22 @@ require_once '../../includes/layouts/header.php';
                                 <input type="text" id="address" name="address" class="form-control" placeholder="Ví dụ: Quận 1, TP. Hồ Chí Minh" value="<?php echo htmlspecialchars($dia_chi); ?>">
                             </div>
 
+<<<<<<< HEAD
                             <div class="form-group full-width">
                                 <label class="form-label" for="favorite_subjects">Môn học yêu thích <span style="font-weight: 400; color: var(--text-muted); font-size: 0.8rem;">(Ngăn cách bằng dấu phẩy)</span></label>
+=======
+                            <div class="form-group full-width" style="margin-bottom: 10px;">
+                                <label class="form-label" for="favorite_subjects">Môn học yêu thích (Ngăn cách bằng dấu phẩy)</label>
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                                 <input type="text" id="favorite_subjects" name="favorite_subjects" class="form-control" placeholder="Ví dụ: Toán, Lý, Hóa, Tiếng Anh" value="<?php echo htmlspecialchars($mon_yeu_thich_str); ?>">
                             </div>
                         </div>
 
+<<<<<<< HEAD
                         <button type="submit" class="btn-edit-profile" style="width: auto; padding: 14px 40px;">
+=======
+                        <button type="submit" class="btn-edit-profile" style="width: auto; padding: 15px 40px;">
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
                             <i class="fas fa-save"></i> Lưu thông tin
                         </button>
                     </form>
@@ -341,6 +522,7 @@ require_once '../../includes/layouts/header.php';
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 </main>
 
 <script>
@@ -404,3 +586,27 @@ require_once '../../includes/layouts/header.php';
         }
     });
 </script>
+=======
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).style.display = "block";
+            setTimeout(() => document.getElementById(tabName).classList.add("active"), 10);
+            if(evt.currentTarget.classList.contains('tab-btn')) {
+                evt.currentTarget.classList.add("active");
+            }
+        }
+    </script>
+</body>
+</html>
+>>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
