@@ -1,15 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-<<<<<<< HEAD
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
-=======
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '5f5bbc991bb48db8921776c7bc9e41badd488e1d',
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
+        'reference' => '5220383f54ec6abf11ed0e41df9c8c7475b7d1a3',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -17,267 +11,11 @@
     ),
     'versions' => array(
         '__root__' => array(
-<<<<<<< HEAD
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
-=======
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '5f5bbc991bb48db8921776c7bc9e41badd488e1d',
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
+            'reference' => '5220383f54ec6abf11ed0e41df9c8c7475b7d1a3',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'dompdf/dompdf' => array(
-<<<<<<< HEAD
-            'pretty_version' => 'v2.0.8',
-            'version' => '2.0.8.0',
-            'reference' => 'c20247574601700e1f7c8dab39310fca1964dc52',
-=======
-            'pretty_version' => 'v3.1.5',
-            'version' => '3.1.5.0',
-            'reference' => 'f11ead23a8a76d0ff9bbc6c7c8fd7e05ca328496',
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../dompdf/dompdf',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-<<<<<<< HEAD
-        'masterminds/html5' => array(
-            'pretty_version' => '2.10.1',
-            'version' => '2.10.1.0',
-            'reference' => 'fd5018f6815fff903946d0564977b44ce8010e29',
-=======
-        'dompdf/php-font-lib' => array(
-            'pretty_version' => '1.0.2',
-            'version' => '1.0.2.0',
-            'reference' => 'a6e9a688a2a80016ac080b97be73d3e10c444c9a',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../dompdf/php-font-lib',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'dompdf/php-svg-lib' => array(
-            'pretty_version' => '1.0.2',
-            'version' => '1.0.2.0',
-            'reference' => '8259ffb930817e72b1ff1caef5d226501f3dfeb1',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../dompdf/php-svg-lib',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'firebase/php-jwt' => array(
-            'pretty_version' => 'v7.1.0',
-            'version' => '7.1.0.0',
-            'reference' => 'b374a5d1a4f1f67fadc2165cdb284645945e2fc0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../firebase/php-jwt',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'google/apiclient' => array(
-            'pretty_version' => 'v2.19.3',
-            'version' => '2.19.3.0',
-            'reference' => 'a1f02761994fd9defb20f6f1449205fd66f450de',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../google/apiclient',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'google/apiclient-services' => array(
-            'pretty_version' => 'v0.446.0',
-            'version' => '0.446.0.0',
-            'reference' => 'fb2fef1d021fec1e6cf2d2129fcb5c303d0f01c1',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../google/apiclient-services',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'google/auth' => array(
-            'pretty_version' => 'v1.51.0',
-            'version' => '1.51.0.0',
-            'reference' => '4c4776e398ff255e81b3b8c4373983f5e1b765bf',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../google/auth',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'guzzlehttp/guzzle' => array(
-            'pretty_version' => '7.12.1',
-            'version' => '7.12.1.0',
-            'reference' => 'd34627490fbc03bf5c5d7cfed81f2faa19519425',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../guzzlehttp/guzzle',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'guzzlehttp/promises' => array(
-            'pretty_version' => '2.5.0',
-            'version' => '2.5.0.0',
-            'reference' => '4360e982f87f5f258bf872d094647791db2f4c8e',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../guzzlehttp/promises',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'guzzlehttp/psr7' => array(
-            'pretty_version' => '2.12.1',
-            'version' => '2.12.1.0',
-            'reference' => '172ef2f4e9824c1e058b7f30be8ae25a02c0f2b7',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../guzzlehttp/psr7',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'laminas/laminas-escaper' => array(
-            'pretty_version' => '2.18.0',
-            'version' => '2.18.0.0',
-            'reference' => '06f211dfffff18d91844c1f55250d5d13c007e18',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../laminas/laminas-escaper',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'masterminds/html5' => array(
-            'pretty_version' => '2.10.0',
-            'version' => '2.10.0.0',
-            'reference' => 'fcf91eb64359852f00d921887b219479b4f21251',
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../masterminds/html5',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-<<<<<<< HEAD
-        'phenx/php-font-lib' => array(
-            'pretty_version' => '0.5.6',
-            'version' => '0.5.6.0',
-            'reference' => 'a1681e9793040740a405ac5b189275059e2a9863',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../phenx/php-font-lib',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'phenx/php-svg-lib' => array(
-            'pretty_version' => '0.5.4',
-            'version' => '0.5.4.0',
-            'reference' => '46b25da81613a9cf43c83b2a8c2c1bdab27df691',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../phenx/php-svg-lib',
-=======
-        'monolog/monolog' => array(
-            'pretty_version' => '3.10.0',
-            'version' => '3.10.0.0',
-            'reference' => 'b321dd6749f0bf7189444158a3ce785cc16d69b0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../monolog/monolog',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'phpoffice/phpword' => array(
-            'pretty_version' => '1.1.0',
-            'version' => '1.1.0.0',
-            'reference' => '90a55955e6a772bb4cd9b1ef6a7e88c8976c2561',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../phpoffice/phpword',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'psr/cache' => array(
-            'pretty_version' => '3.0.0',
-            'version' => '3.0.0.0',
-            'reference' => 'aa5030cfa5405eccfdcb1083ce040c2cb8d253bf',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../psr/cache',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'psr/http-client' => array(
-            'pretty_version' => '1.0.3',
-            'version' => '1.0.3.0',
-            'reference' => 'bb5906edc1c324c9a05aa0873d40117941e5fa90',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../psr/http-client',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'psr/http-client-implementation' => array(
-            'dev_requirement' => false,
-            'provided' => array(
-                0 => '1.0',
-            ),
-        ),
-        'psr/http-factory' => array(
-            'pretty_version' => '1.1.0',
-            'version' => '1.1.0.0',
-            'reference' => '2b4765fddfe3b508ac62f829e852b1501d3f6e8a',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../psr/http-factory',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'psr/http-factory-implementation' => array(
-            'dev_requirement' => false,
-            'provided' => array(
-                0 => '1.0',
-            ),
-        ),
-        'psr/http-message' => array(
-            'pretty_version' => '2.0',
-            'version' => '2.0.0.0',
-            'reference' => '402d35bcb92c70c026d1a6a9883f06b2ead23d71',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../psr/http-message',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'psr/http-message-implementation' => array(
-            'dev_requirement' => false,
-            'provided' => array(
-                0 => '1.0',
-            ),
-        ),
-        'psr/log' => array(
-            'pretty_version' => '3.0.2',
-            'version' => '3.0.2.0',
-            'reference' => 'f16e1d5863e37f8d8c2a01719f5b34baa2b714d3',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../psr/log',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'psr/log-implementation' => array(
-            'dev_requirement' => false,
-            'provided' => array(
-                0 => '3.0.0',
-            ),
-        ),
-        'ralouphie/getallheaders' => array(
-            'pretty_version' => '3.0.3',
-            'version' => '3.0.3.0',
-            'reference' => '120b605dfeb996808c31b6477290a714d356e822',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../ralouphie/getallheaders',
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'sabberworm/php-css-parser' => array(
-<<<<<<< HEAD
-            'pretty_version' => 'v8.9.0',
-            'version' => '8.9.0.0',
-            'reference' => 'd8e916507b88e389e26d4ab03c904a082aa66bb9',
-=======
-            'pretty_version' => 'v9.4.0',
-            'version' => '9.4.0.0',
-            'reference' => 'fd3bf9fb173e0df649bc4e3e0d088a1b2417c08f',
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../sabberworm/php-css-parser',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
@@ -290,18 +28,6 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-<<<<<<< HEAD
-=======
-        'symfony/deprecation-contracts' => array(
-            'pretty_version' => 'v3.7.0',
-            'version' => '3.7.0.0',
-            'reference' => '50f59d1f3ca46d41ac911f97a78626b6756af35b',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../symfony/deprecation-contracts',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
         'symfony/polyfill-mbstring' => array(
             'pretty_version' => 'v1.38.2',
             'version' => '1.38.2.0',
@@ -311,26 +37,5 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-<<<<<<< HEAD
-=======
-        'symfony/polyfill-php80' => array(
-            'pretty_version' => 'v1.37.0',
-            'version' => '1.37.0.0',
-            'reference' => 'dfb55726c3a76ea3b6459fcfda1ec2d80a682411',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../symfony/polyfill-php80',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'thecodingmachine/safe' => array(
-            'pretty_version' => 'v3.4.0',
-            'version' => '3.4.0.0',
-            'reference' => '705683a25bacf0d4860c7dea4d7947bfd09eea19',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../thecodingmachine/safe',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8
     ),
 );

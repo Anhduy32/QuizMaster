@@ -1,20 +1,5 @@
 {
     "require": {
-<<<<<<< HEAD
-        "smalot/pdfparser": "^2.0",
-        "dompdf/dompdf": "^2.0"
+        "smalot/pdfparser": "^2.7"
     }
 }
-=======
-        "google/apiclient": "^2.16",
-        "dompdf/dompdf": "^3.1",
-        "phpoffice/phpword": "^1.1",
-        "smalot/pdfparser": "^2.12"
-    },
-    "config": {
-        "allow-plugins": {
-            "google/apiclient-services": true
-        }
-    }
-}
->>>>>>> ab9a31091b98369af41f8f9bb34fe5bab4437cf8

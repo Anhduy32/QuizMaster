@@ -1,15 +1,21 @@
 <?php
 session_start();
-if (!isset($_SESSION['username'])) {
+
+// Định nghĩa biến trạng thái đăng nhập để sử dụng cho JS phía dưới
+$is_logged_in = isset($_SESSION['username']);
+
+if (!$is_logged_in) {
     header('Location: ../login/login.php');
     exit();
 }
 
-include '../../config/database.php';
+require_once '../../config/database.php';
 
 $ten_dang_nhap = $_SESSION['username'];
 
+// ==========================================
 // 1. LẤY THÔNG TIN CÁ NHÂN
+// ==========================================
 $truy_van = "SELECT * FROM users WHERE username = ?";
 $chuan_bi = $conn->prepare($truy_van);
 $chuan_bi->bind_param('s', $ten_dang_nhap);
@@ -28,7 +34,9 @@ $avatar_url = !empty($nguoi_dung['picture'])
     ? $nguoi_dung['picture'] 
     : "https://ui-avatars.com/api/?name=" . urlencode($ho_va_ten) . "&background=0f5c6b&color=fff&size=150";
 
+// ==========================================
 // 2. LẤY KHO ĐỀ THI ĐÃ TẠO
+// ==========================================
 $truy_van_de_thi = "SELECT * FROM quizzes WHERE creator_username = ? ORDER BY created_at DESC";
 $stmt_de_thi = $conn->prepare($truy_van_de_thi);
 $stmt_de_thi->bind_param('s', $ten_dang_nhap);
@@ -36,7 +44,9 @@ $stmt_de_thi->execute();
 $ket_qua_de_thi = $stmt_de_thi->get_result();
 $tong_de_da_tao = $ket_qua_de_thi->num_rows;
 
+// ==========================================
 // 3. LẤY LỊCH SỬ LÀM BÀI
+// ==========================================
 $truy_van_lich_su = "
     SELECT q.title, q.subject, h.score, h.total_score, h.completed_at 
     FROM quiz_history h 
@@ -62,27 +72,38 @@ if ($tong_luot_thi > 0) {
     $diem_tb = round($tong_diem / $tong_luot_thi, 1);
 }
 
+// ==========================================
 // 4. XỬ LÝ FORM CẬP NHẬT
-$thong_bao = '';
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['cap_nhat'])) {
-    $ho_va_ten_moi = trim($_POST['full_name']);
-    $ngay_sinh_moi = trim($_POST['birthdate']);
-    $gioi_tinh_moi = trim($_POST['gender']);
-    $dia_chi_moi   = trim($_POST['address']);
-    $mon_yeu_thich_moi = trim($_POST['favorite_subjects']);
+// ==========================================
+$update_success = false;
+$update_error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cap_nhat'])) {
+    $ho_va_ten_moi = trim($_POST['full_name'] ?? '');
+    $ngay_sinh_moi = trim($_POST['birthdate'] ?? '');
+    $gioi_tinh_moi = trim($_POST['gender'] ?? '');
+    $dia_chi_moi   = trim($_POST['address'] ?? '');
+    $mon_yeu_thich_moi = trim($_POST['favorite_subjects'] ?? '');
 
     $truy_van_cap_nhat = "UPDATE users SET full_name=?, birthdate=?, gender=?, address=?, favorite_subjects=? WHERE username=?";
     $chuan_bi_cap_nhat = $conn->prepare($truy_van_cap_nhat);
     $chuan_bi_cap_nhat->bind_param('ssssss', $ho_va_ten_moi, $ngay_sinh_moi, $gioi_tinh_moi, $dia_chi_moi, $mon_yeu_thich_moi, $ten_dang_nhap);
 
     if ($chuan_bi_cap_nhat->execute()) {
-        $thong_bao = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Cập nhật hồ sơ thành công!</div>';
-        // Cập nhật session
         $_SESSION['full_name'] = $ho_va_ten_moi;
-        // Refresh lại trang để hiển thị thông tin mới
-        echo "<script>setTimeout(function(){ window.location.href = window.location.pathname; }, 1500);</script>";
+        
+        // Cập nhật biến hiển thị trực tiếp
+        $ho_va_ten = $ho_va_ten_moi;
+        $ngay_sinh = $ngay_sinh_moi;
+        $gioi_tinh = $gioi_tinh_moi;
+        $dia_chi = $dia_chi_moi;
+        $mon_yeu_thich_str = $mon_yeu_thich_moi;
+        
+        // Bật cờ thành công phục vụ cho JS (SweetAlert2)
+        $update_success = true;
     } else {
-        $thong_bao = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Lỗi: ' . htmlspecialchars($conn->error) . '</div>';
+        // Lưu lại lỗi nếu có
+        $update_error = $conn->error;
     }
 }
 
@@ -97,7 +118,6 @@ function getSubjectStyle($subject) {
     return ['bg' => 'bg-science', 'badge' => 'badge-green', 'icon' => 'fa-flask'];
 }
 
-// ================= PAGE CONFIG =================
 $page_title = 'Hồ sơ cá nhân - QuizMaster';
 $page_css = 'profile.css';
 
@@ -121,8 +141,8 @@ require_once '../../includes/layouts/header.php';
                         <p>
                             <i class="fas fa-check-circle" style="color: var(--accent-teal);"></i> 
                             <?php 
-                                if($chuc_vu == 'admin') echo 'Quản trị viên hệ thống';
-                                elseif($chuc_vu == 'giaovien') echo 'Giảng viên chuyên môn';
+                                if($chuc_vu === 'admin') echo 'Quản trị viên hệ thống';
+                                elseif($chuc_vu === 'giaovien') echo 'Giảng viên chuyên môn';
                                 else echo 'Thành viên học tập tích cực';
                             ?>
                         </p>
@@ -162,11 +182,13 @@ require_once '../../includes/layouts/header.php';
                 <h3 class="sidebar-title" style="margin-top: 30px;"><i class="fas fa-star" style="color: #f59e0b;"></i> Môn học yêu thích</h3>
                 <div class="skill-tags">
                     <?php if (!empty($mon_yeu_thich_str)): 
-                        $mon_hocs = explode(',', $mon_yeu_thich_str);
-                        foreach ($mon_hocs as $mon): ?>
-                            <span class="tag"><?php echo htmlspecialchars(trim($mon)); ?></span>
-                        <?php endforeach; ?>
-                    <?php else: ?>
+                        $mon_hocs = array_map('trim', explode(',', $mon_yeu_thich_str));
+                        foreach ($mon_hocs as $mon): 
+                            if(!empty($mon)): ?>
+                                <span class="tag"><?php echo htmlspecialchars($mon); ?></span>
+                            <?php endif; 
+                        endforeach; 
+                    else: ?>
                         <span style="font-size: 0.9rem; color: #718096;">Chưa có môn học yêu thích.</span>
                     <?php endif; ?>
                 </div>
@@ -201,7 +223,6 @@ require_once '../../includes/layouts/header.php';
                 <!-- TAB: KHO ĐỀ THI -->
                 <div id="created" class="tab-content active">
                     <?php if ($tong_de_da_tao > 0): 
-                        // Reset result set để duyệt lại
                         $ket_qua_de_thi->data_seek(0);
                         while ($quiz = $ket_qua_de_thi->fetch_assoc()): 
                             $style = getSubjectStyle($quiz['subject']); 
@@ -295,9 +316,7 @@ require_once '../../includes/layouts/header.php';
                         Cập nhật thông tin của bạn để nhận được trải nghiệm tốt nhất.
                     </p>
                     
-                    <?php echo $thong_bao; ?>
-
-                    <form method="POST" action="">
+                    <form id="updateProfileForm" method="POST" action="">
                         <input type="hidden" name="cap_nhat" value="1">
 
                         <div class="update-grid">
@@ -315,7 +334,7 @@ require_once '../../includes/layouts/header.php';
                                 <label class="form-label" for="gender">Giới tính</label>
                                 <select id="gender" name="gender" class="form-control">
                                     <option value="" <?php echo empty($gioi_tinh) ? 'selected' : ''; ?>>Chọn giới tính</option>
-                                    <option value="Nam" <?php echo $gioi_tinh === 'Nam' ? 'selected' : ''; ?>>Nam</option>
+                                    <option value="Nam" <?php echo $gioi_tinj === 'Nam' ? 'selected' : ''; ?>>Nam</option>
                                     <option value="Nữ" <?php echo $gioi_tinh === 'Nữ' ? 'selected' : ''; ?>>Nữ</option>
                                     <option value="Khác" <?php echo $gioi_tinh === 'Khác' ? 'selected' : ''; ?>>Khác</option>
                                 </select>
@@ -333,70 +352,29 @@ require_once '../../includes/layouts/header.php';
                         </div>
 
                         <button type="submit" class="btn-edit-profile" style="width: auto; padding: 14px 40px;">
+                            <i class="fas fa-save"></i> Lưu thay đổi
                         </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </main>
 
-<script>
-    function openTab(evt, tabName) {
-        // Ẩn tất cả tab content
-        var tabcontent = document.getElementsByClassName("tab-content");
-        for (var i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].classList.remove("active");
-            tabcontent[i].style.display = "none";
-        }
-        
-        // Xóa active của tất cả tab button
-        var tablinks = document.getElementsByClassName("tab-btn");
-        for (var i = 0; i < tablinks.length; i++) {
-            tablinks[i].classList.remove("active");
-        }
-        
-        // Hiển thị tab được chọn
-        var activeTab = document.getElementById(tabName);
-        if (activeTab) {
-            activeTab.style.display = "block";
-            setTimeout(function() {
-                activeTab.classList.add("active");
-            }, 10);
-        }
-        
-        // Active tab button
-        if (evt && evt.currentTarget) {
-            evt.currentTarget.classList.add("active");
-        } else {
-            // Nếu không có event (gọi từ bên ngoài), tìm button tương ứng
-            var buttons = document.getElementsByClassName("tab-btn");
-            for (var i = 0; i < buttons.length; i++) {
-                if (buttons[i].getAttribute("onclick") && buttons[i].getAttribute("onclick").includes(tabName)) {
-                    buttons[i].classList.add("active");
-                    break;
-                }
-            }
-        }
-    }
+<!-- 1. Thư viện SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    // Mặc định mở tab đầu tiên
-    document.addEventListener('DOMContentLoaded', function() {
-        // Kiểm tra nếu có tham số tab trên URL
-        var urlParams = new URLSearchParams(window.location.search);
-        var tab = urlParams.get('tab');
-        if (tab && document.getElementById(tab)) {
-            openTab(null, tab);
-        } else {
-            // Mặc định mở tab "created"
-            var defaultTab = document.querySelector('.tab-btn.active');
-            if (defaultTab) {
-                var tabName = defaultTab.getAttribute('onclick');
-                if (tabName) {
-                    var match = tabName.match(/openTab\(event,\s*['"]([^'"]+)['"]\)/);
-                    if (match) {
-                        openTab(null, match[1]);
-                    }
-                }
-            }
-        }
-    });
+<!-- 2. Truyền trạng thái PHP sang JavaScript an toàn -->
+<script>
+    window.APP_CONFIG = {
+        isLoggedIn: <?php echo $is_logged_in ? 'true' : 'false'; ?>
+    };
+
+    window.PROFILE_STATUS = {
+        success: <?php echo $update_success ? 'true' : 'false'; ?>,
+        error: <?php echo !empty($update_error) ? json_encode($update_error) : 'null'; ?>
+    };
 </script>
+
+<!-- 3. Gọi file JavaScript riêng biệt quản lý logic -->
+<script src="../../assets/js/update_profile.js"></script>
