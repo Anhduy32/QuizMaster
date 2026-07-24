@@ -1,6 +1,15 @@
 <?php
 session_start();
-include '../../../config/database.php';
+include '../../config/database.php';
+
+$root_path = dirname(__DIR__, 2); 
+$db_path = $root_path . '/config/database.php';
+
+if (file_exists($db_path)) {
+    include $db_path;
+} else {
+    die("Lỗi hệ thống: Không tìm thấy file kết nối cơ sở dữ liệu tại đường dẫn: " . $db_path);
+}
 
 if (!isset($_SESSION['username'])) {
     header("Location: ../login/login.php");
@@ -14,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST' || !isset($_POST['quiz_id'])) {
 
 $quiz_id = (int)$_POST['quiz_id'];
 $user_answers = isset($_POST['answers']) ? $_POST['answers'] : [];
+$username = $_SESSION['username'];
 
 // Lấy thông tin đề thi
 $query_quiz = "SELECT * FROM quizzes WHERE id = ?";
@@ -22,7 +32,7 @@ $stmt_quiz->bind_param("i", $quiz_id);
 $stmt_quiz->execute();
 $quiz = $stmt_quiz->get_result()->fetch_assoc();
 
-// Lấy danh sách câu hỏi và đáp án đúng
+// Lấy danh sách câu hỏi
 $query_q = "SELECT id, content, opt_a, opt_b, opt_c, opt_d, correct_opt FROM questions WHERE quiz_id = ? ORDER BY id ASC";
 $stmt_q = $conn->prepare($query_q);
 $stmt_q->bind_param("i", $quiz_id);
@@ -43,22 +53,62 @@ while ($q = $questions->fetch_assoc()) {
     // Kiểm tra nếu là đề tự luận (opt_b trống)
     if (empty($q['opt_b'])) {
         $is_essay_quiz = true;
-        $is_correct = false; // Tự luận không tự động chấm điểm được
+        $is_correct = false; // Tự luận chờ giáo viên chấm
     } else {
         $is_correct = ($u_ans === $c_ans);
         if ($is_correct) $correct_count++;
     }
 
     $review_data[] = [
+        'question_id' => $q_id,
         'question' => $q,
         'user_ans' => $u_ans,
         'is_correct' => $is_correct
     ];
 }
 
-// Tính điểm hệ 10
+// 1. TÍNH TOÁN ĐIỂM SỐ & TRẠNG THÁI
+$total_score = 10; 
 $score = ($total_q > 0) ? round(($correct_count / $total_q) * 10, 2) : 0;
+$is_graded = 1; // Mặc định là đã chấm (Trắc nghiệm)
+
+// Nếu là bài tự luận, điểm tạm thời bằng 0 và trạng thái là chờ chấm
+if ($is_essay_quiz) {
+    $score = 0;
+    $is_graded = 0; 
+}
+
+// ============================================================
+// 2. LƯU LỊCH SỬ CHUNG VÀO BẢNG quiz_history
+// ============================================================
+$insert_history = "INSERT INTO quiz_history (username, quiz_id, score, total_score, is_graded, completed_at) VALUES (?, ?, ?, ?, ?, NOW())";
+$stmt_history = $conn->prepare($insert_history);
+$stmt_history->bind_param("siddi", $username, $quiz_id, $score, $total_score, $is_graded);
+$stmt_history->execute();
+
+// Lấy ID của lượt thi vừa lưu để liên kết với bảng chi tiết
+$history_id = $stmt_history->insert_id;
+$stmt_history->close();
+
+// ============================================================
+// 3. LƯU CHI TIẾT TỪNG ĐÁP ÁN VÀO BẢNG user_answers
+// ============================================================
+if ($history_id > 0 && !empty($review_data)) {
+    $insert_ans = "INSERT INTO user_answers (history_id, question_id, user_answer, is_correct) VALUES (?, ?, ?, ?)";
+    $stmt_ans = $conn->prepare($insert_ans);
+    
+    foreach ($review_data as $data) {
+        $q_id = $data['question_id'];
+        $u_a = $data['user_ans'] !== null ? $data['user_ans'] : ''; 
+        $is_corr = $data['is_correct'] ? 1 : 0;
+        
+        $stmt_ans->bind_param("iisi", $history_id, $q_id, $u_a, $is_corr);
+        $stmt_ans->execute();
+    }
+    $stmt_ans->close();
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -118,7 +168,7 @@ $score = ($total_q > 0) ? round(($correct_count / $total_q) * 10, 2) : 0;
             </div>
         <?php endif; ?>
 
-        <a href="../../../home.php" class="btn-home"><i class="fas fa-arrow-left"></i> Về Bảng điều khiển</a>
+        <a href="../../home.php" class="btn-home"><i class="fas fa-arrow-left"></i> Về Bảng điều khiển</a>
     </div>
 
     <?php if ($quiz['has_answers'] == 1 && !$is_essay_quiz): ?>
