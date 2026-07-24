@@ -87,5 +87,6 @@ require_once 'includes/layouts/header.php';
 </script>
 
 <script src="assets/js/main.js"></script>
+<script src="assets/js/main.js"></script>
 </body>
 </html>
